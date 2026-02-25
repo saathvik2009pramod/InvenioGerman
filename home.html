@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Welcome — Digital Germany</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="home-page">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="#">Digital Germany</a>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a href="#home" class="nav-link">Home</a>
+          <a href="#explore" class="nav-link">Explore</a>
+          <a href="#phrases" class="nav-link">Phrases</a>
+          <a href="#firebase" class="nav-link">Demo</a>
+          <a href="#contact" class="nav-link">Contact</a>
+        </nav>
+        <button class="nav-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+      </div>
+    </header>
+
+    <main id="home">
+      <section class="hero">
+        <div class="hero-bg" aria-hidden="true"></div>
+        <div class="hero-content container">
+          <h1 class="title">Willkommen in <span class="accent">Digital Germany</span></h1>
+          <p class="lead">An immersive single-page experience — culture, cities, language, and interactive demos.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#explore">Explore Cities</a>
+            <a class="btn ghost" href="#phrases">Learn Phrases</a>
+          </div>
+        </div>
+        <div class="hero-blob" aria-hidden="true"></div>
+      </section>
+
+      <section id="explore" class="section container reveal">
+        <h2>Explore Cities</h2>
+        <p class="muted">Hover cards to reveal quick facts and subtle motion.</p>
+        <div class="cards">
+          <article class="card">
+            <img src="https://images.unsplash.com/photo-1543349684-1b9bc2a1b2e3?w=800&q=60&auto=format&fit=crop" alt="Berlin skyline">
+            <div class="card-body">
+              <h3>Berlin</h3>
+              <p class="small muted">Tech hub, culture, and history.</p>
+            </div>
+          </article>
+          <article class="card">
+            <img src="https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=60&auto=format&fit=crop" alt="Munich">
+            <div class="card-body">
+              <h3>Munich</h3>
+              <p class="small muted">Design, beer gardens, and engineering.</p>
+            </div>
+          </article>
+          <article class="card">
+            <img src="https://images.unsplash.com/photo-1505765057496-3fdb6a7c8f8b?w=800&q=60&auto=format&fit=crop" alt="Hamburg">
+            <div class="card-body">
+              <h3>Hamburg</h3>
+              <p class="small muted">Maritime spirit and creative scenes.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="phrases" class="section container reveal">
+        <h2>Useful Phrases</h2>
+        <div class="phrases-grid">
+          <button class="phrase">Guten Tag — Hello</button>
+          <button class="phrase">Danke — Thank you</button>
+          <button class="phrase">Wo ist der Bahnhof? — Where is the station?</button>
+          <button class="phrase">Ich spreche nur ein bisschen Deutsch — I speak only a little German</button>
+        </div>
+      </section>
+
+      <section id="firebase" class="section container reveal">
+        <h2>Interactive Demo</h2>
+        <p class="muted">Small Firebase demo: sign-in and post messages (replace config to enable).</p>
+        <div class="firebase-panel">
+          <div class="auth">
+            <div id="user-info" class="user-info" hidden>
+              <div>Signed in as <strong id="user-name"></strong></div>
+              <div class="muted" id="user-email"></div>
+              <button id="sign-out" class="btn">Sign out</button>
+            </div>
+            <div id="signed-out" class="signed-out">
+              <button id="google-signin" class="btn">Sign in with Google</button>
+              <form id="email-signin-form" class="email-form">
+                <input id="email" type="email" placeholder="Email" required>
+                <input id="password" type="password" placeholder="Password" required>
+                <button id="email-signin" class="btn secondary">Sign In / Sign Up</button>
+              </form>
+            </div>
+          </div>
+
+          <div id="firestore-demo" class="firestore" hidden>
+            <label for="msg-input" class="sr-only">Message</label>
+            <input id="msg-input" placeholder="Write a short message">
+            <button id="save-msg" class="btn">Save</button>
+            <ul id="messages" class="messages"></ul>
+          </div>
+          
+          <div id="storage-demo" class="firestore" hidden style="margin-top:12px;">
+            <label for="file-input" class="sr-only">Upload file</label>
+            <input id="file-input" type="file">
+            <button id="upload-btn" class="btn">Upload File</button>
+            <div id="upload-progress" style="height:8px;background:rgba(255,255,255,0.03);border-radius:8px;margin-top:8px;overflow:hidden;display:none;">
+              <div id="upload-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#5eead4,#60a5fa);"></div>
+            </div>
+            <div id="upload-url" style="margin-top:8px;word-break:break-all;color:var(--accent);"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="section container reveal">
+        <h2>Contact</h2>
+        <p class="muted">This is a demo page — use Firebase Console and Hosting to publish.</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <div>© Digital Germany — Demo</div>
+        <div class="muted">Made with ❤️</div>
+      </div>
+    </footer>
+
+    <!-- Firebase CDN (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+    <script src="script.js"></script>
+  </body>
+  </html>
