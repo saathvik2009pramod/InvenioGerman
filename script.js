@@ -427,3 +427,87 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]))}
 });
+
+// Additional UI: theme toggle, flashcard practice with SpeechRecognition
+document.addEventListener('DOMContentLoaded', ()=>{
+  // Theme toggle
+  const themeBtn = document.getElementById('theme-toggle');
+  const body = document.body;
+  const saved = localStorage.getItem('theme');
+  if(saved === 'light') body.classList.add('light');
+  function updateThemeUI(){ themeBtn.textContent = body.classList.contains('light') ? '☀️' : '🌙'; }
+  updateThemeUI();
+  themeBtn?.addEventListener('click', ()=>{
+    body.classList.toggle('light');
+    localStorage.setItem('theme', body.classList.contains('light') ? 'light' : 'dark');
+    updateThemeUI();
+  });
+
+  // Build phrases list from buttons
+  const phraseBtns = Array.from(document.querySelectorAll('.phrase'));
+  const phrases = phraseBtns.map(b=>{
+    const parts = b.textContent.split('—');
+    const german = (parts[0]||b.dataset.text||b.textContent).trim();
+    const english = (parts[1]||'').trim();
+    return {german, english};
+  }).filter(p=>p.german);
+
+  // Flashcard modal elements
+  const practiceBtn = document.getElementById('practice-phrases');
+  const modal = document.getElementById('flashcard-modal');
+  const closeBtn = document.getElementById('flashcard-close');
+  const flashGerman = document.getElementById('flash-german');
+  const flashEnglish = document.getElementById('flash-english');
+  const flashPlay = document.getElementById('flash-play');
+  const flashRecord = document.getElementById('flash-record');
+  const flashNext = document.getElementById('flash-next');
+  const flashResult = document.getElementById('flash-result');
+  let idx = 0;
+  function openModal(i=0){ idx = i; if(modal){ modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); show(idx); } }
+  function closeModal(){ if(modal){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); flashResult.textContent=''; } }
+  practiceBtn?.addEventListener('click', ()=> openModal(0));
+  closeBtn?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
+
+  function show(i){ const p = phrases[i]; if(!p) return; flashGerman.textContent = p.german; flashEnglish.textContent = p.english || ''; flashResult.textContent = ''; }
+
+  // Speech synthesis helper (local to this scope)
+  function speakLocal(text){ if(!window.speechSynthesis) return; const u=new SpeechSynthesisUtterance(text); u.lang='de-DE'; speechSynthesis.cancel(); speechSynthesis.speak(u); }
+  flashPlay?.addEventListener('click', ()=> speakLocal(phrases[idx]?.german || ''));
+
+  // Simple Levenshtein distance
+  function levenshtein(a,b){ a = a||''; b = b||''; const m=a.length, n=b.length; if(!m) return n; if(!n) return m; const dp = Array.from({length:m+1}, ()=> new Array(n+1).fill(0)); for(let i=0;i<=m;i++) dp[i][0]=i; for(let j=0;j<=n;j++) dp[0][j]=j; for(let i=1;i<=m;i++) for(let j=1;j<=n;j++){ const cost = a[i-1]===b[j-1] ? 0 : 1; dp[i][j] = Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost); } return dp[m][n]; }
+
+  // Normalize text (lowercase, remove punctuation)
+  function norm(s){ return (s||'').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'').replace(/[^a-z0-9\s]/gi,'').trim(); }
+
+  // SpeechRecognition wrapper returning Promise<string>
+  function recognizeOnce(timeout=6000){ return new Promise((resolve,reject)=>{
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SpeechRec) return reject(new Error('SpeechRecognition not supported'));
+    const r = new SpeechRec(); r.lang='de-DE'; r.interimResults = false; r.maxAlternatives = 1;
+    let done=false;
+    r.onresult = (ev)=>{ if(done) return; done=true; const t = ev.results[0][0].transcript || ''; resolve(t); r.stop(); };
+    r.onerror = (e)=>{ if(done) return; done=true; reject(e); };
+    r.onend = ()=>{ if(done) return; done=true; resolve(''); };
+    try{ r.start(); }catch(err){ return reject(err); }
+    setTimeout(()=>{ if(!done){ done=true; try{ r.stop(); }catch(e){} resolve(''); } }, timeout);
+  }); }
+
+  flashRecord?.addEventListener('click', async ()=>{
+    flashResult.textContent = 'Listening...';
+    try{
+      const transcript = await recognizeOnce(7000);
+      if(!transcript){ flashResult.textContent = 'No speech detected. Try again.'; return; }
+      const target = norm(phrases[idx].german);
+      const heard = norm(transcript);
+      const dist = levenshtein(target, heard);
+      const maxLen = Math.max(target.length, heard.length, 1);
+      const score = Math.max(0, Math.round((1 - dist/maxLen) * 100));
+      flashResult.textContent = `You said: "${transcript}" — score: ${score}%`;
+      if(score > 70) flashResult.textContent += ' — Good!';
+    }catch(err){ flashResult.textContent = 'Microphone unavailable or permission denied.'; }
+  });
+
+  flashNext?.addEventListener('click', ()=>{ idx = (idx + 1) % phrases.length; show(idx); });
+});

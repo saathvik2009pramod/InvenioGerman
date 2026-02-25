@@ -19,6 +19,7 @@
           <a href="#contact" class="nav-link">Contact</a>
         </nav>
         <button class="nav-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+        <button id="theme-toggle" aria-label="Toggle theme" title="Toggle dark / light">🌙</button>
       </div>
     </header>
 
@@ -41,21 +42,21 @@
         <p class="muted">Hover cards to reveal quick facts and subtle motion.</p>
         <div class="cards">
           <article class="card">
-            <img src="https://images.unsplash.com/photo-1543349684-1b9bc2a1b2e3?w=800&q=60&auto=format&fit=crop" alt="Berlin skyline">
+            <img loading="lazy" src="https://images.unsplash.com/photo-1543349684-1b9bc2a1b2e3?w=800&q=60&auto=format&fit=crop" alt="Berlin skyline">
             <div class="card-body">
               <h3>Berlin</h3>
               <p class="small muted">Tech hub, culture, and history.</p>
             </div>
           </article>
           <article class="card">
-            <img src="https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=60&auto=format&fit=crop" alt="Munich">
+            <img loading="lazy" src="https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=60&auto=format&fit=crop" alt="Munich">
             <div class="card-body">
               <h3>Munich</h3>
               <p class="small muted">Design, beer gardens, and engineering.</p>
             </div>
           </article>
           <article class="card">
-            <img src="https://images.unsplash.com/photo-1505765057496-3fdb6a7c8f8b?w=800&q=60&auto=format&fit=crop" alt="Hamburg">
+            <img loading="lazy" src="https://images.unsplash.com/photo-1505765057496-3fdb6a7c8f8b?w=800&q=60&auto=format&fit=crop" alt="Hamburg">
             <div class="card-body">
               <h3>Hamburg</h3>
               <p class="small muted">Maritime spirit and creative scenes.</p>
@@ -67,10 +68,13 @@
       <section id="phrases" class="section container reveal">
         <h2>Useful Phrases</h2>
         <div class="phrases-grid">
-          <button class="phrase">Guten Tag — Hello</button>
-          <button class="phrase">Danke — Thank you</button>
-          <button class="phrase">Wo ist der Bahnhof? — Where is the station?</button>
-          <button class="phrase">Ich spreche nur ein bisschen Deutsch — I speak only a little German</button>
+          <button class="phrase" data-text="Guten Tag">Guten Tag — Hello</button>
+          <button class="phrase" data-text="Danke">Danke — Thank you</button>
+          <button class="phrase" data-text="Wo ist der Bahnhof?">Wo ist der Bahnhof? — Where is the station?</button>
+          <button class="phrase" data-text="Ich spreche nur ein bisschen Deutsch">Ich spreche nur ein bisschen Deutsch — I speak only a little German</button>
+        </div>
+        <div style="margin-top:12px">
+          <button id="practice-phrases" class="btn primary">Practice Phrases</button>
         </div>
       </section>
 
@@ -127,6 +131,23 @@
     </footer>
 
     <!-- Firebase CDN (compat) -->
+    <!-- Flashcard / speech modal -->
+    <div id="flashcard-modal" class="modal" aria-hidden="true">
+      <div class="content" role="dialog" aria-modal="true" aria-labelledby="flashcard-title">
+        <button id="flashcard-close" class="close">Close</button>
+        <h3 id="flashcard-title">Practice Phrases</h3>
+        <div id="flashcard-card" style="display:flex;flex-direction:column;gap:12px;margin-top:12px">
+          <div id="flash-german" style="font-size:24px;font-weight:700"></div>
+          <div id="flash-english" class="small muted"></div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="flash-play" class="btn">Play</button>
+            <button id="flash-record" class="btn">Record</button>
+            <button id="flash-next" class="btn secondary">Next</button>
+          </div>
+          <div id="flash-result" class="small muted" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
