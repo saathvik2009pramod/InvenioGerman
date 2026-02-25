@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Level Overview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="level">
+    <header class="site-header">
+      <div class="container">
+        <a class="back-link" href="index.html">← Back to home</a>
+        <h1 id="level-title">Level</h1>
+        <p id="level-subtitle" class="subtitle"></p>
+      </div>
+    </header>
+
+    <main class="container page-section">
+      <section class="panel">
+        <h2>Module Overview</h2>
+        <p class="muted">Select a module card to open its learning view.</p>
+        <div id="module-list" class="module-grid"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">Every module follows: Notes first, Practice second.</footer>
+    <script src="script.js"></script>
+  </body>
+</html>
