@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module · Deutsch Lernen</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="module-page">
+
+  <!-- Sticky header -->
+  <div class="sticky-header">
+    <a class="back-btn" id="backToModules" href="#">← Modules</a>
+    <h3 id="stickyTitle">Module</h3>
+    <span class="level-badge" id="stickyBadge" style="margin-left:auto;"></span>
+  </div>
+
+  <div class="module-content">
+
+    <!-- NOTES SECTION -->
+    <div id="notesSection">
+      <div class="section-title">Learning Notes</div>
+      <div class="notes-section" id="notesBody"></div>
+
+      <div class="divider"></div>
+
+      <div style="text-align:center; margin-bottom: 40px;">
+        <button class="btn-primary" onclick="startPractice()">
+          Start Practice <span class="btn-arrow">→</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- PRACTICE SECTION -->
+    <div id="practiceSection" style="display:none;">
+      <div class="section-title">Practice Questions</div>
+
+      <div class="practice-header">
+        <div class="progress-bar-wrap" style="flex:1; margin-right:16px; margin-bottom:0;">
+          <div class="progress-bar-fill" id="practiceProgress" style="width:0%"></div>
+        </div>
+        <span class="q-progress-text" id="practiceCounter">1 / 5</span>
+      </div>
+
+      <!-- Question block -->
+      <div class="question-block" id="practiceBlock">
+        <p class="question-text" id="practiceQ"></p>
+        <div class="answers-list" id="practiceAnswers"></div>
+        <div class="hint-popup" id="practiceHint">
+          <span class="hint-icon">💡</span>
+          <p id="practiceHintText"><strong>Hint:</strong> </p>
+        </div>
+        <div class="submit-btn-wrap" style="margin-top:16px;">
+          <button class="btn-primary" id="practiceSubmit" onclick="submitPractice()" disabled>
+            Submit <span class="btn-arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Completion -->
+      <div class="completion-screen" id="completionScreen">
+        <div class="completion-icon">🏆</div>
+        <h2>Module Complete!</h2>
+        <p id="completionScore">You answered all questions. Great work!</p>
+        <div class="completion-btns">
+          <button class="btn-primary" id="nextModuleBtn" onclick="goNextModule()">
+            Next Module <span class="btn-arrow">→</span>
+          </button>
+          <button class="btn-secondary" id="backModulesBtn" onclick="goBackModules()">
+            ← All Modules
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const params   = new URLSearchParams(window.location.search);
+    const level    = params.get('level') || 'A1';
+    const modIndex = parseInt(params.get('module')) || 0;
+
+    // Back link
+    document.getElementById('backToModules').href = `home.html?level=${level}`;
+
+    // Level badge
+    const badge = document.getElementById('stickyBadge');
+    badge.textContent = level;
+    badge.className   = `level-badge ${level.toLowerCase()}`;
+
+    // ── Module Content Data ──
+    const MODULE_DATA = {
+      A1: [
+        {
+          title: 'Greetings & Introductions',
+          notes: `
+            <h2>Greetings & Introductions</h2>
+            <p>In German, greetings depend on the time of day and how formal the situation is. Let's start with the most common ones.</p>
+            <ul>
+              <li><strong>Guten Morgen</strong> — Good morning (used until around noon)</li>
+              <li><strong>Guten Tag</strong> — Good day / Hello (formal, used midday)</li>
+              <li><strong>Guten Abend</strong> — Good evening</li>
+              <li><strong>Hallo</strong> — Hello (informal, for friends)</li>
+              <li><strong>Tschüss / Auf Wiedersehen</strong> — Goodbye (informal / formal)</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>"Guten Tag" is a safe all-purpose formal greeting. Use "Hallo" only with friends or peers.</p></div>
+            <p>When introducing yourself, use these patterns:</p>
+            <ul>
+              <li><strong>Ich heiße …</strong> — My name is …</li>
+              <li><strong>Ich bin …</strong> — I am …</li>
+              <li><strong>Wie heißen Sie?</strong> — What is your name? (formal)</li>
+              <li><strong>Wie heißt du?</strong> — What is your name? (informal)</li>
+            </ul>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>Use "Sie" (capital S) for strangers, teachers, or professionals. Use "du" with friends, family, or children.</p></div>
+            <p>To ask where someone is from: <strong>Woher kommen Sie? / Woher kommst du?</strong><br/>Answer: <strong>Ich komme aus Deutschland / England / Indien.</strong></p>
+          `,
+          questions: [
+            { q: 'What does "Guten Morgen" mean?', opts: ['Good evening','Good night','Good morning','Good afternoon'], correct: 2, hint: '"Morgen" is the German word for morning.' },
+            { q: 'How do you say "My name is Maria" in German?', opts: ['Ich bin Maria heißt.','Ich heiße Maria.','Maria bin ich heiße.','Mein Name heiße Maria.'], correct: 1, hint: '"Ich heiße" literally means "I am called".' },
+            { q: 'Which greeting is INFORMAL?', opts: ['Guten Tag','Guten Morgen','Hallo','Guten Abend'], correct: 2, hint: '"Hallo" is the casual, everyday greeting between friends.' },
+            { q: 'You are meeting your professor. Which form should you use?', opts: ['du','ihr','Sie','dich'], correct: 2, hint: '"Sie" (capital S) is the formal second-person pronoun in German.' },
+            { q: 'How do you say "Goodbye" formally?', opts: ['Tschüss','Ciao','Hallo','Auf Wiedersehen'], correct: 3, hint: '"Auf Wiedersehen" literally means "until we see each other again".' }
+          ]
+        },
+        {
+          title: 'Numbers & Colors',
+          notes: `
+            <h2>Numbers & Colors</h2>
+            <p>Numbers and colors are among the first things to learn in any language. Here's how German handles them.</p>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Numbers 1–20</h3>
+            <ul>
+              <li>1–10: <strong>eins, zwei, drei, vier, fünf, sechs, sieben, acht, neun, zehn</strong></li>
+              <li>11–20: <strong>elf, zwölf, dreizehn, vierzehn, fünfzehn, sechzehn, siebzehn, achtzehn, neunzehn, zwanzig</strong></li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>German numbers above 20 are said "units + und + tens": 21 = <strong>einundzwanzig</strong> (one-and-twenty).</p></div>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Common Colors</h3>
+            <ul>
+              <li>rot (red) · blau (blue) · gelb (yellow) · grün (green)</li>
+              <li>schwarz (black) · weiß (white) · grau (grey) · braun (brown)</li>
+            </ul>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>Colors as adjectives change their endings based on noun gender. "Ein rotes Auto" (a red car) — the -es ending matches the neuter noun "Auto".</p></div>
+          `,
+          questions: [
+            { q: 'What is the German word for the number 7?', opts: ['Sechs','Acht','Sieben','Neun'], correct: 2, hint: 'Count 1-2-3-4-5-6-7: eins, zwei, drei, vier, fünf, sechs, sieben.' },
+            { q: 'How do you say "black" in German?', opts: ['Weiß','Rot','Grün','Schwarz'], correct: 3, hint: 'The German flag is schwarz-rot-gold (black-red-gold).' },
+            { q: 'What is 21 in German?', opts: ['Zwanzigein','Einundzwanzig','Einzwanzig','Zwanzigeins'], correct: 1, hint: 'German constructs compound numbers as "unit + und + ten".' },
+            { q: 'Which word means "yellow"?', opts: ['Gelb','Grau','Blau','Braun'], correct: 0, hint: 'Think of the German word for the color of the sun.' },
+            { q: 'How do you say "three hundred" in German?', opts: ['Dreizehn','Dreizig','Dreihundert','Dreiundert'], correct: 2, hint: '"Hundert" = hundred. Simply combine drei + hundert.' }
+          ]
+        },
+        {
+          title: 'Articles & Gender',
+          notes: `
+            <h2>Articles & Gender</h2>
+            <p>Every German noun has a grammatical gender: masculine (der), feminine (die), or neuter (das). Unlike English, you must learn the article together with the noun.</p>
+            <ul>
+              <li><strong>der</strong> — masculine (der Mann = the man)</li>
+              <li><strong>die</strong> — feminine (die Frau = the woman)</li>
+              <li><strong>das</strong> — neuter (das Kind = the child)</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>The indefinite articles are: <strong>ein</strong> (m), <strong>eine</strong> (f), <strong>ein</strong> (n). For example: ein Mann, eine Frau, ein Kind.</p></div>
+            <p>Some patterns help predict gender:</p>
+            <ul>
+              <li>Nouns ending in <strong>-ung, -heit, -keit, -schaft</strong> → feminine (die)</li>
+              <li>Nouns ending in <strong>-chen, -lein</strong> → always neuter (das)</li>
+              <li>Male persons and job titles → usually masculine (der)</li>
+            </ul>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>Always learn a new noun with its article. Not just "Tisch" — but "der Tisch" (the table). This will save you later!</p></div>
+          `,
+          questions: [
+            { q: 'What is the correct article for "Frau" (woman)?', opts: ['der','das','die','ein'], correct: 2, hint: '"Frau" is feminine — all female persons use "die".' },
+            { q: 'What ending typically indicates a feminine noun?', opts: ['-chen','-heit','-lein','-ig'], correct: 1, hint: 'Words ending in -heit, -keit, -schaft, -ung are always feminine (die).' },
+            { q: 'Which article is used for neuter nouns?', opts: ['der','die','das','den'], correct: 2, hint: 'The three definite articles are der (m), die (f), das (n).' },
+            { q: '"Das Mädchen" (the girl) uses "das" because:', opts: ['Girls are neuter in meaning','It ends in -chen, which is always neuter','It is an exception','Girls use das in southern Germany'], correct: 1, hint: 'All diminutive endings -chen and -lein make nouns neuter, regardless of natural gender.' },
+            { q: 'What is the indefinite article for a masculine noun?', opts: ['eine','ein','der','eines'], correct: 1, hint: 'Masculine and neuter nouns share the same indefinite article.' }
+          ]
+        },
+        {
+          title: 'Everyday Verbs',
+          notes: `
+            <h2>Everyday Verbs</h2>
+            <p>German verbs conjugate based on the subject. Here are the most essential verbs for beginners.</p>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">sein (to be)</h3>
+            <ul>
+              <li>ich bin · du bist · er/sie/es ist</li>
+              <li>wir sind · ihr seid · sie/Sie sind</li>
+            </ul>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">haben (to have)</h3>
+            <ul>
+              <li>ich habe · du hast · er/sie/es hat</li>
+              <li>wir haben · ihr habt · sie/Sie haben</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>"sein" and "haben" are irregular. They don't follow normal conjugation patterns — they must be memorized.</p></div>
+            <p>Other key verbs follow regular patterns (stem + ending):</p>
+            <ul>
+              <li><strong>machen</strong> (to do/make): ich mache, du machst, er macht</li>
+              <li><strong>gehen</strong> (to go): ich gehe, du gehst, er geht</li>
+              <li><strong>kommen</strong> (to come): ich komme, du kommst, er kommt</li>
+            </ul>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>In German, the verb always comes in second position in a statement: "Ich gehe heute." (I go today.) — but also: "Heute gehe ich." (Today I go.) The verb stays in 2nd position!</p></div>
+          `,
+          questions: [
+            { q: 'What is the correct form of "sein" for "ich"?', opts: ['ist','seid','sind','bin'], correct: 3, hint: '"sein" is irregular: ich bin, du bist, er ist…' },
+            { q: 'Fill in: "Er ___ einen Bruder." (He has a brother.)', opts: ['bin','hat','hast','haben'], correct: 1, hint: '"Er" is 3rd person singular — "haben" becomes "hat".' },
+            { q: 'Which sentence has correct German word order?', opts: ['Ich heute gehe.','Gehe ich heute.','Ich gehe heute.','Heute ich gehe.'], correct: 2, hint: 'The verb must always be in second position in a German main clause.' },
+            { q: 'What does "machen" mean?', opts: ['to go','to come','to say','to do / make'], correct: 3, hint: '"Ich mache Hausaufgaben" = I do homework.' },
+            { q: 'Fill in: "Wir ___ aus Berlin." (We come from Berlin.)', opts: ['komme','kommt','kommen','kommst'], correct: 2, hint: '"Wir" uses the same ending as the infinitive: -en.' }
+          ]
+        },
+        {
+          title: 'Family & People',
+          notes: `
+            <h2>Family & People</h2>
+            <p>Talking about family is one of the first personal topics in German. Here's the essential vocabulary.</p>
+            <ul>
+              <li>die Mutter — mother &nbsp;|&nbsp; der Vater — father</li>
+              <li>die Eltern — parents &nbsp;|&nbsp; das Kind — child</li>
+              <li>der Bruder — brother &nbsp;|&nbsp; die Schwester — sister</li>
+              <li>die Großmutter / Oma — grandmother</li>
+              <li>der Großvater / Opa — grandfather</li>
+              <li>der Onkel — uncle &nbsp;|&nbsp; die Tante — aunt</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>"Geschwister" is the word for siblings (no singular form). So "Ich habe Geschwister" = I have siblings.</p></div>
+            <p>To describe people, use adjectives after "sein":</p>
+            <ul>
+              <li>Mein Vater ist groß und freundlich. (My father is tall and friendly.)</li>
+              <li>Meine Schwester ist jung. (My sister is young.)</li>
+            </ul>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>Possessive adjectives (mein/meine) change based on gender: "mein Bruder" (m) but "meine Schwester" (f).</p></div>
+          `,
+          questions: [
+            { q: 'What is the German word for "mother"?', opts: ['die Tochter','der Vater','die Mutter','die Schwester'], correct: 2, hint: '"Mutter" sounds similar to "mother" in English!' },
+            { q: 'How do you say "my brother" in German?', opts: ['meine Bruder','meinen Bruder','mein Bruder','der mein Bruder'], correct: 2, hint: 'Bruder is masculine — use "mein" (no extra ending in nominative).' },
+            { q: '"Geschwister" means:', opts: ['parents','grandparents','siblings','cousins'], correct: 2, hint: '"Geschwister" is always plural — it refers to brothers and/or sisters collectively.' },
+            { q: 'What does "der Großvater" mean?', opts: ['great-uncle','grandfather','great-grandfather','uncle'], correct: 1, hint: '"Groß" means big/great, "Vater" means father → grandfather.' },
+            { q: 'My sister is young → Meine Schwester ___ jung.', opts: ['haben','bin','sind','ist'], correct: 3, hint: '"Schwester" is feminine and singular — use the 3rd person singular of "sein".' }
+          ]
+        }
+      ],
+      B1: [
+        {
+          title: 'Perfekt Tense',
+          notes: `
+            <h2>The Perfekt Tense</h2>
+            <p>The Perfekt is the most common way to talk about past events in spoken German. It is formed with a helper verb (haben or sein) + a past participle (Partizip II).</p>
+            <p><strong>Structure:</strong> Subject + haben/sein + ... + Partizip II</p>
+            <ul>
+              <li>Ich <strong>habe</strong> das Buch gelesen. (I read the book.)</li>
+              <li>Er <strong>ist</strong> nach Hause gegangen. (He went home.)</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>Use <strong>sein</strong> (not haben) with verbs of movement or change of state: gehen, kommen, fahren, fliegen, werden, bleiben, sein.</p></div>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Forming the Partizip II</h3>
+            <ul>
+              <li>Regular verbs: ge- + stem + -(e)t → "gemacht", "gespielt"</li>
+              <li>Irregular verbs: ge- + changed stem + -en → "gegessen", "geschrieben"</li>
+              <li>Verbs with be-, ge-, er-, ver-: no extra ge- → "besucht", "erklärt"</li>
+            </ul>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>The Partizip II always goes to the END of the clause. "Ich habe gestern <em>viel gearbeitet</em>." The middle of the sentence is free for time/place adverbs.</p></div>
+          `,
+          questions: [
+            { q: 'Which auxiliary verb does "fahren" (to drive/travel) use in the Perfekt?', opts: ['haben','sein','werden','können'], correct: 1, hint: '"fahren" is a verb of movement — movement verbs use "sein" in Perfekt.' },
+            { q: 'What is the Partizip II of "machen"?', opts: ['gemacht','gemacht','gegemacht','macht'], correct: 0, hint: 'Regular verbs: ge- + stem + -t. Mach + t = gemacht.' },
+            { q: 'Where does the Partizip II go in a sentence?', opts: ['At the start','After the subject','In second position','At the very end'], correct: 3, hint: 'In German, the Partizip II is always sentence-final in Perfekt constructions.' },
+            { q: 'Which sentence is correct?', opts: ['Ich habe nach Hause gegangen.','Ich bin nach Hause gegangen.','Ich sein nach Hause gegangen.','Ich habe nach Hause geht.'], correct: 1, hint: '"gehen" is a movement verb — it takes "sein" as its auxiliary.' },
+            { q: 'What is the Partizip II of "schreiben" (to write)?', opts: ['geschreibt','schrieben','geschrieben','gewriten'], correct: 2, hint: '"schreiben" is irregular: the stem changes to "schrieb" → geschrieben.' }
+          ]
+        },
+        {
+          title: 'Modal Verbs',
+          notes: `
+            <h2>Modal Verbs</h2>
+            <p>Modal verbs express ability, permission, necessity, or desire. They are always used with an infinitive at the end of the clause.</p>
+            <ul>
+              <li><strong>können</strong> — can / to be able to</li>
+              <li><strong>müssen</strong> — must / to have to</li>
+              <li><strong>dürfen</strong> — may / to be allowed to</li>
+              <li><strong>wollen</strong> — to want to</li>
+              <li><strong>sollen</strong> — should / to be supposed to</li>
+              <li><strong>möchten</strong> — would like to (polite)</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>Modal verbs are irregular in the singular: ich <strong>kann</strong>, du <strong>kannst</strong>, er <strong>kann</strong> — but wir <strong>können</strong>, ihr <strong>könnt</strong>.</p></div>
+            <p>Structure: <strong>Modal verb (position 2) + ... + Infinitive (end)</strong></p>
+            <ul>
+              <li>Ich <strong>muss</strong> heute Abend <em>arbeiten</em>. (I have to work tonight.)</li>
+              <li>Kannst du mir <em>helfen</em>? (Can you help me?)</li>
+            </ul>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>"Nicht müssen" (not have to) and "nicht dürfen" (not allowed to) mean very different things! Don't confuse them.</p></div>
+          `,
+          questions: [
+            { q: 'Which modal verb means "to be allowed to"?', opts: ['müssen','können','dürfen','sollen'], correct: 2, hint: '"Darf ich...?" is the classic way to ask for permission in German.' },
+            { q: 'Complete: "Er ___ heute nicht kommen." (He cannot come today.)', opts: ['will','darf','kann','muss'], correct: 2, hint: '"Können" expresses ability or possibility.' },
+            { q: 'What is the correct word order with a modal verb?', opts: ['Ich arbeiten muss heute.','Ich muss heute arbeiten.','Ich muss arbeiten heute.','Heute ich muss arbeiten.'], correct: 1, hint: 'Modal verb in position 2, infinitive at the end.' },
+            { q: '"Möchten" most closely means:', opts: ['to have to','to be able to','would like to','should'], correct: 2, hint: '"Ich möchte..." is a polite way of expressing a wish or desire.' },
+            { q: '"Du musst nicht kommen" means:', opts: ["You can't come","You shouldn't come","You don't have to come","You must come"], correct: 2, hint: '"Müssen" negated = "don\'t have to" — not "must not"! That would be "dürfen nicht".' }
+          ]
+        },
+        {
+          title: 'Subordinate Clauses',
+          notes: `
+            <h2>Subordinate Clauses</h2>
+            <p>Subordinate clauses give extra information and are introduced by conjunctions. The key rule: <strong>verb goes to the END</strong>.</p>
+            <ul>
+              <li><strong>weil</strong> — because: Ich lerne Deutsch, weil es interessant <em>ist</em>.</li>
+              <li><strong>obwohl</strong> — although: Sie kommt, obwohl sie müde <em>ist</em>.</li>
+              <li><strong>dass</strong> — that: Ich weiß, dass er Recht <em>hat</em>.</li>
+              <li><strong>wenn</strong> — when / if: Wenn es regnet, bleibe ich zu Hause.</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>The subordinate clause is ALWAYS separated from the main clause with a comma. This is not optional in German!</p></div>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>If the subordinate clause comes FIRST, the main clause inverts: "Weil es regnet, <strong>bleibe ich</strong> zu Hause." — the subject comes after the verb.</p></div>
+          `,
+          questions: [
+            { q: 'Which word introduces a causal subordinate clause?', opts: ['obwohl','wenn','weil','dass'], correct: 2, hint: '"Weil" = because. It explains the reason for something.' },
+            { q: 'Where does the verb go in a "weil" clause?', opts: ['Second position','First position','At the end','After weil'], correct: 2, hint: 'All subordinating conjunctions send the verb to the very end of the clause.' },
+            { q: 'Choose the correct sentence:', opts: ['Ich bleibe zuhause, weil regnet es.','Ich bleibe zuhause, weil es regnet.','Ich bleibe zuhause, weil es regnen.','Ich bleibe zuhause weil es regnet.'], correct: 1, hint: 'Verb at the end + don\'t forget the comma before "weil".' },
+            { q: '"Obwohl" is best translated as:', opts: ['because','that','if','although'], correct: 3, hint: '"Obwohl er krank ist, kommt er." — although he is sick, he comes.' },
+            { q: 'Reorder: "er / dass / weiß / ich / kommt" → "Ich weiß, dass ___."', opts: ['er kommt','kommt er','er kommen','kommt er ist'], correct: 0, hint: 'In a "dass" clause, the conjugated verb goes at the end: "dass er kommt".' }
+          ]
+        },
+        {
+          title: 'Prepositions & Cases',
+          notes: `
+            <h2>Prepositions & Cases</h2>
+            <p>German prepositions require specific cases for the nouns that follow them. This is one of the trickiest — and most essential — parts of B1 grammar.</p>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Always Accusative</h3>
+            <ul>
+              <li>durch (through), für (for), gegen (against), ohne (without), um (around/at)</li>
+            </ul>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Always Dative</h3>
+            <ul>
+              <li>aus (from/out of), bei (at/near), mit (with), nach (after/to), seit (since), von (from/by), zu (to), gegenüber (opposite)</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>Two-way prepositions (in, an, auf, über, unter, vor, hinter, neben, zwischen) use Accusative for movement and Dative for location.</p></div>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>Memory trick: DOGFU for accusative prepositions — <strong>D</strong>urch, <strong>O</strong>hne, <strong>G</strong>egen, <strong>F</strong>ür, <strong>U</strong>m.</p></div>
+          `,
+          questions: [
+            { q: 'Which preposition always takes the Accusative case?', opts: ['mit','bei','für','zu'], correct: 2, hint: '"Für" is one of the DOGFU accusative prepositions.' },
+            { q: '"Ich fahre in die Stadt" — why Accusative?', opts: ['It is a dative-only verb','The preposition "in" here shows movement','It follows a modal verb','It is always accusative'], correct: 1, hint: 'Two-way prepositions use Accusative for movement (where to?) and Dative for location (where?).' },
+            { q: 'Complete: "Ich gehe ___ Supermarkt." (I go to the supermarket — Dative)', opts: ['in den','in dem','in das','zum'], correct: 3, hint: '"Zum" = zu + dem. "Zu" always takes Dative, and zu+dem contracts to "zum".' },
+            { q: 'Which is a Dative-only preposition?', opts: ['durch','ohne','mit','für'], correct: 2, hint: '"Mit" (with) always takes Dative: mit dem Mann, mit der Frau.' },
+            { q: '"Das Buch liegt auf ___ Tisch." (The book lies on the table — location)', opts: ['dem','den','des','die'], correct: 0, hint: 'Location → Dative. "Tisch" is masculine → Dative = "dem".' }
+          ]
+        },
+        {
+          title: 'Opinion & Argument',
+          notes: `
+            <h2>Expressing Opinions in German</h2>
+            <p>Being able to express, support, and counter arguments is crucial at B1. Here are key phrases:</p>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Giving Your Opinion</h3>
+            <ul>
+              <li>Ich finde, dass… (I think/find that…)</li>
+              <li>Meiner Meinung nach… (In my opinion…)</li>
+              <li>Ich bin der Meinung, dass… (I am of the opinion that…)</li>
+              <li>Ich glaube/denke, dass… (I believe/think that…)</li>
+            </ul>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Agreeing & Disagreeing</h3>
+            <ul>
+              <li>Das stimmt. / Genau. (That's right. / Exactly.)</li>
+              <li>Da bin ich anderer Meinung. (I disagree.)</li>
+              <li>Ich sehe das anders. (I see it differently.)</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>"Meiner Meinung nach" is a set phrase — "nach" always comes at the END: "Meiner Meinung <strong>nach</strong>".</p></div>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>In German B1 speaking exams, structure your opinion: State view → Give reason (weil/denn) → Give example (zum Beispiel).</p></div>
+          `,
+          questions: [
+            { q: 'What does "Meiner Meinung nach" mean?', opts: ['After my opinion','In my opinion','My opinion is','I have an opinion'], correct: 1, hint: '"Meinung" = opinion. "Meiner Meinung nach" is a fixed phrase.' },
+            { q: 'Which phrase expresses DISAGREEMENT?', opts: ['Das stimmt.','Genau!','Ich sehe das anders.','Ich finde auch.'], correct: 2, hint: '"Anders" means "differently" — "I see that differently."' },
+            { q: 'Complete: "Ich finde, ___ das gut ist."', opts: ['weil','dass','obwohl','wenn'], correct: 1, hint: '"Ich finde, dass..." introduces an opinion clause with "dass".' },
+            { q: '"Denn" is used to:', opts: ['end a sentence','show contrast','give a reason (but without verb-final)','introduce a question'], correct: 2, hint: '"Denn" = because/for, but unlike "weil", it does NOT send the verb to the end.' },
+            { q: 'Which phrase means "I think"?', opts: ['Ich hoffe','Ich weiß','Ich denke','Ich soll'], correct: 2, hint: '"Denken" = to think. "Ich denke, dass..." is a common opinion starter.' }
+          ]
+        }
+      ],
+      C1: [
+        {
+          title: 'Konjunktiv II',
+          notes: `
+            <h2>Konjunktiv II</h2>
+            <p>The Konjunktiv II is used to express hypotheticals, wishes, polite requests, and in reported speech. It is essential for advanced, formal German.</p>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Formation</h3>
+            <ul>
+              <li><strong>würde + Infinitiv</strong> (most common): Ich würde gerne kommen.</li>
+              <li>Strong forms for common verbs: wäre (sein), hätte (haben), könnte (können), müsste (müssen)</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>In formal/written German, prefer the strong Konjunktiv II forms over "würde" for common verbs: write "Er käme" not "Er würde kommen" — though both are understood.</p></div>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Key Uses</h3>
+            <ul>
+              <li>Hypotheticals: Wenn ich Zeit hätte, würde ich reisen.</li>
+              <li>Polite requests: Könnten Sie mir bitte helfen?</li>
+              <li>Reported speech: Er sagte, er käme später.</li>
+              <li>Wishes: Wenn ich nur mehr Deutsch spräche!</li>
+            </ul>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>In reported speech at C1, Konjunktiv I is technically preferred for formal writing. But Konjunktiv II is used when Konjunktiv I would be identical to indicative (e.g. with "sie/Sie").</p></div>
+          `,
+          questions: [
+            { q: 'What is the Konjunktiv II form of "sein"?', opts: ['sei','würde sein','wäre','gewesen'], correct: 2, hint: 'The strong Konjunktiv II of "sein" is "wäre" — like "was" but with an umlaut and subjunctive ending.' },
+            { q: 'Which sentence expresses a polite request using Konjunktiv II?', opts: ['Helfen Sie mir bitte!','Können Sie mir helfen?','Könnten Sie mir helfen?','Sie helfen mir.'], correct: 2, hint: '"Könnten" is the Konjunktiv II of "können" — it softens the request considerably.' },
+            { q: 'In a Konditionalsatz (if-clause), Konjunktiv II appears:', opts: ['only in the main clause','only in the wenn-clause','in both clauses','in neither clause'], correct: 2, hint: '"Wenn ich Zeit hätte, würde ich kommen." — Konjunktiv II appears in both the wenn-clause and the main clause.' },
+            { q: '"Er sagte, er käme morgen" — "käme" is used because:', opts: ['It is Konjunktiv I','It is the Perfekt of kommen','It is Konjunktiv II of kommen, used in reported speech','It is an irregular present tense'], correct: 2, hint: '"Käme" is Konjunktiv II of "kommen", used here in indirect speech to signal the content is reported, not confirmed.' },
+            { q: 'Which is the most formal, written alternative to "Er würde kommen"?', opts: ['Er kann kommen','Er käme','Er ist gekommen','Er kommt'], correct: 1, hint: 'In formal German writing, the synthetic Konjunktiv II form "käme" is preferred over the analytic "würde kommen".' }
+          ]
+        },
+        {
+          title: 'Passive Voice',
+          notes: `
+            <h2>Passive Voice</h2>
+            <p>German has two types of passive: the Vorgangspassiv (process passive) and the Zustandspassiv (state passive).</p>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Vorgangspassiv (Action)</h3>
+            <ul>
+              <li>Formed with: <strong>werden + Partizip II</strong></li>
+              <li>Das Haus wird gebaut. (The house is being built.)</li>
+              <li>Der Brief wurde geschrieben. (The letter was written.)</li>
+            </ul>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Zustandspassiv (Result State)</h3>
+            <ul>
+              <li>Formed with: <strong>sein + Partizip II</strong></li>
+              <li>Das Haus ist gebaut. (The house is built — finished state.)</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>The agent (doer) can be expressed with "von + Dative": "Das Buch wurde von Goethe geschrieben." In formal or scientific German, "durch + Accusative" is used for indirect agents.</p></div>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>The Zustandspassiv with "sein" can be confused with an adjective predicate. Context clarifies: "Die Tür ist geöffnet" could be state passive (the door has been opened) or just a description (the door is open).</p></div>
+          `,
+          questions: [
+            { q: 'What auxiliary verb forms the Vorgangspassiv?', opts: ['sein','haben','werden','lassen'], correct: 2, hint: '"Werden" + Partizip II = the process passive voice.' },
+            { q: '"Das Auto ist repariert." — This is an example of:', opts: ['Vorgangspassiv','Zustandspassiv','Perfekt aktiv','Konjunktiv II'], correct: 1, hint: '"Sein + Partizip II" describes a resulting state — the car is in a repaired condition.' },
+            { q: 'How do you express the agent in a passive sentence?', opts: ['mit + Dative','von + Dative','durch + Nominative','für + Accusative'], correct: 1, hint: '"von" + Dative introduces the person responsible: "von dem Ingenieur repariert".' },
+            { q: 'Rewrite in passive: "Man hat das Fenster geöffnet."', opts: ['Das Fenster hat geöffnet worden.','Das Fenster wurde geöffnet.','Das Fenster ist geöffnet worden.','Das Fenster ist geöffnet.'], correct: 2, hint: 'Perfekt passive = sein + Partizip II + worden: "ist geöffnet worden".' },
+            { q: '"Durch" (rather than "von") is used in passive to indicate:', opts: ['the direct agent','an indirect means or cause','the time of action','the location'], correct: 1, hint: '"Durch den Sturm wurden Bäume gefällt" — the storm is an indirect cause, not an intentional agent.' }
+          ]
+        },
+        {
+          title: 'Extended Participial Phrases',
+          notes: `
+            <h2>Extended Participial Phrases (Erweitertes Partizipialattribut)</h2>
+            <p>This is one of the most distinctive features of formal written German. Instead of a relative clause, German can compress it into an extended participial phrase placed before the noun.</p>
+            <p><strong>Relative clause:</strong> der Mann, der das Buch geschrieben hat<br/>
+            <strong>Participial phrase:</strong> der das Buch geschrieben habende Mann</p>
+            <div class="note-box"><span class="box-label">Note:</span><p>The structure is: article + [all modifiers + Partizip I or II with adjective ending] + noun. Everything is "sandwiched" between the article and the noun.</p></div>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">When to use which participle</h3>
+            <ul>
+              <li><strong>Partizip I</strong> (active, ongoing): das schlafende Kind (the sleeping child)</li>
+              <li><strong>Partizip II</strong> (passive, completed): das gebaute Haus (the built house)</li>
+            </ul>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>These constructions appear heavily in newspaper language, legal texts, and academic writing. When reading such texts, identify the article first, then search right before the noun for the participle with its adjective ending.</p></div>
+          `,
+          questions: [
+            { q: '"Das weinende Kind" — what is "weinende" here?', opts: ['Partizip II used as adjective','Partizip I used as adjective','An infinitive','A past tense form'], correct: 1, hint: 'Partizip I = stem + -end + adjective ending. "Weinen" → weinend → weinende.' },
+            { q: 'What is the Partizip I of "arbeiten"?', opts: ['gearbeitet','gearbeiten','arbeitend','arbeitete'], correct: 2, hint: 'Partizip I = infinitive stem + -d. "arbeiten" → arbeitend.' },
+            { q: '"Der von vielen gelesene Roman" means:', opts: ['The novel read by many','The novel reading many','The novel that reads many','A novel about many readers'], correct: 0, hint: '"Gelesen" is Partizip II, functioning as a passive adjective — the novel that was read by many.' },
+            { q: 'Extended participial phrases are most common in:', opts: ['Spoken informal German','Academic and newspaper language','Children\'s books','SMS messages'], correct: 1, hint: 'These complex structures are a hallmark of formal written German registers.' },
+            { q: 'Convert: "der Zug, der gerade ankommende" → correct form before "Zug":', opts: ['der gerade ankommend Zug','der gerade ankommende Zug','den gerade ankommenden Zug','die gerade ankommende Zug'], correct: 1, hint: '"Zug" is masculine nominative → adjective ending is -e. "Der + [adj] + Noun" = der ankommende Zug.' }
+          ]
+        },
+        {
+          title: 'Register & Formality',
+          notes: `
+            <h2>Register & Formality in German</h2>
+            <p>At C1, awareness of register — the level of formality in language — is crucial. German has very distinct formal and informal registers.</p>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Key Distinctions</h3>
+            <ul>
+              <li><strong>du / Sie</strong>: informal vs. formal address</li>
+              <li><strong>Vocabulary choices</strong>: "kriegen" (informal) vs. "erhalten" (formal) — both mean "to receive"</li>
+              <li><strong>Verb forms</strong>: Preterite (Präteritum) is preferred in writing over Perfekt</li>
+              <li><strong>Passive constructions</strong>: More common in formal/academic texts</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>In formal writing, avoid contractions and colloquialisms. "Ich hab's" becomes "Ich habe es" and "wegen dem" (colloquial dative) becomes "wegen des" (correct genitive).</p></div>
+            <h3 style="color:var(--gold-light);margin:20px 0 10px;">Formal Equivalents</h3>
+            <ul>
+              <li>kriegen → erhalten / bekommen (formal)</li>
+              <li>machen → durchführen / realisieren (formal)</li>
+              <li>sagen → mitteilen / informieren (formal)</li>
+            </ul>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>The Preterite (Präteritum) of modal verbs is preferred even in spoken formal contexts: "Ich wollte fragen..." rather than "Ich habe fragen wollen..."</p></div>
+          `,
+          questions: [
+            { q: 'Which word is the FORMAL equivalent of "kriegen"?', opts: ['bekommen','nehmen','holen','erhalten'], correct: 3, hint: '"Erhalten" is the most formal word for "to receive" — used in official correspondence.' },
+            { q: 'In formal written German, which past tense is preferred over Perfekt?', opts: ['Plusquamperfekt','Futur II','Präteritum','Konjunktiv I'], correct: 2, hint: 'The Präteritum (simple past) is the standard in written narratives and formal texts.' },
+            { q: '"Wegen des Wetters" is correct because "wegen" governs:', opts: ['Accusative','Nominative','Dative (colloquial)','Genitive'], correct: 3, hint: 'Formally, "wegen" takes the Genitive. "Wegen dem" is only accepted colloquially.' },
+            { q: 'Which feature is MORE common in formal German?', opts: ['Active voice','du-form','Passive constructions','Colloquial contractions'], correct: 2, hint: 'Academic and official texts frequently use passive voice to depersonalise statements.' },
+            { q: 'The formal equivalent of "Ich hab\'s gemacht" is:', opts: ['Ich habe es getan.','Ich machte es','Ich hab es gemacht.','Ich tut es.'], correct: 0, hint: '"Habe es getan" — no contraction, fully spelled out, and "getan" (done) is stylistically more formal than "gemacht" in some contexts.' }
+          ]
+        },
+        {
+          title: 'Advanced Idioms',
+          notes: `
+            <h2>Advanced German Idioms</h2>
+            <p>Idiomatic expressions make your German sound natural and native-like. Here are high-frequency idioms you'll encounter at C1.</p>
+            <ul>
+              <li><strong>auf dem Laufenden bleiben</strong> — to stay up to date</li>
+              <li><strong>jemandem auf den Nerven gehen</strong> — to get on someone's nerves</li>
+              <li><strong>den Nagel auf den Kopf treffen</strong> — to hit the nail on the head</li>
+              <li><strong>Eulen nach Athen tragen</strong> — to carry coals to Newcastle (pointless task)</li>
+              <li><strong>jemandem einen Bären aufbinden</strong> — to pull someone's leg / tell a tall tale</li>
+              <li><strong>etwas auf Eis legen</strong> — to put something on hold / on ice</li>
+            </ul>
+            <div class="note-box"><span class="box-label">Note:</span><p>German idioms are often untranslatable literally. "Jemandem einen Bären aufbinden" literally means "to tie a bear onto someone" — but idiomatically means to trick or deceive them.</p></div>
+            <div class="tip-box"><span class="box-label">Tip:</span><p>Learn idioms in full sentences with context. Don't just memorize the phrase — learn what situation triggers it and what emotional register it carries (humorous, critical, formal, casual).</p></div>
+          `,
+          questions: [
+            { q: '"Den Nagel auf den Kopf treffen" means:', opts: ['To make a mistake','To hit the nail on the head','To lose one\'s temper','To give up easily'], correct: 1, hint: 'This idiom is almost a direct parallel to its English equivalent.' },
+            { q: '"Etwas auf Eis legen" means:', opts: ['To cool something down','To freeze in place','To put on hold','To preserve forever'], correct: 2, hint: 'Like the English "put on ice" — to pause or postpone something.' },
+            { q: '"Eulen nach Athen tragen" describes:', opts: ['Wisdom','A pointless or redundant task','A complicated plan','Carrying heavy burdens'], correct: 1, hint: 'Athens = city of wisdom (owls). Bringing owls there is redundant — like "coals to Newcastle".' },
+            { q: '"Jemandem einen Bären aufbinden" means:', opts: ['To burden someone','To lie to / deceive someone','To help someone with a heavy load','To send someone on an errand'], correct: 1, hint: 'This colorful idiom means to tell someone an unbelievable story — to trick or pull their leg.' },
+            { q: '"Auf dem Laufenden bleiben" is closest to:', opts: ['To stay physically active','To keep running','To stay up to date / informed','To remain in the race'], correct: 2, hint: '"Laufend" can mean "ongoing" or "current" — staying on the current track means staying informed.' }
+          ]
+        }
+      ]
+    };
+
+    // ── Setup ──
+    const data = MODULE_DATA[level]?.[modIndex];
+    if (!data) { window.location.href = `home.html?level=${level}`; }
+
+    document.getElementById('stickyTitle').textContent = data.title;
+    document.getElementById('notesBody').innerHTML     = data.notes;
+
+    // Practice state
+    let pCurrent  = 0;
+    let pAttempts = 0;
+    let pSelected = null;
+    let correctCount = 0;
+
+    function startPractice() {
+      document.getElementById('notesSection').style.display = 'none';
+      document.getElementById('practiceSection').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderPractice();
+    }
+
+    function renderPractice() {
+      const q = data.questions[pCurrent];
+      pAttempts = 0; pSelected = null;
+
+      document.getElementById('practiceCounter').textContent = `${pCurrent + 1} / 5`;
+      document.getElementById('practiceProgress').style.width = `${(pCurrent / 5) * 100}%`;
+      document.getElementById('practiceQ').textContent = q.q;
+      document.getElementById('practiceHint').classList.remove('show');
+      document.getElementById('practiceSubmit').disabled = true;
+
+      const letters = ['A','B','C','D'];
+      const list = document.getElementById('practiceAnswers');
+      list.innerHTML = '';
+      q.opts.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-option';
+        btn.innerHTML = `<span class="answer-letter">${letters[i]}</span> ${opt}`;
+        btn.onclick = () => selectPractice(i);
+        list.appendChild(btn);
+      });
+
+      const block = document.getElementById('practiceBlock');
+      block.style.animation = 'none'; block.offsetHeight;
+      block.style.animation = 'fadeIn 0.35s ease both';
+    }
+
+    function selectPractice(idx) {
+      const btns = document.querySelectorAll('#practiceAnswers .answer-option');
+      btns.forEach((b, i) => {
+        if (!b.classList.contains('wrong')) b.classList.toggle('selected', i === idx);
+      });
+      pSelected = idx;
+      document.getElementById('practiceSubmit').disabled = false;
+      document.getElementById('practiceHint').classList.remove('show');
+    }
+
+    function submitPractice() {
+      if (pSelected === null) return;
+      const q = data.questions[pCurrent];
+      const btns = [...document.querySelectorAll('#practiceAnswers .answer-option')];
+      btns.forEach(b => b.disabled = true);
+
+      if (pSelected === q.correct) {
+        btns[pSelected].classList.remove('selected');
+        btns[pSelected].classList.add('correct');
+        correctCount++;
+        document.getElementById('practiceSubmit').disabled = true;
+        setTimeout(nextPractice, 900);
+      } else {
+        btns[pSelected].classList.remove('selected');
+        btns[pSelected].classList.add('wrong');
+        pAttempts++;
+
+        if (pAttempts === 1) {
+          const hint = document.getElementById('practiceHint');
+          document.getElementById('practiceHintText').innerHTML = `<strong>Hint:</strong> ${q.hint}`;
+          hint.classList.add('show');
+          btns.forEach((b, i) => { if (i !== pSelected) b.disabled = false; });
+          document.getElementById('practiceSubmit').disabled = true;
+          pSelected = null;
+        } else {
+          btns[q.correct].classList.add('correct');
+          document.getElementById('practiceSubmit').disabled = true;
+          setTimeout(nextPractice, 1400);
+        }
+      }
+    }
+
+    // Re-select on retry
+    document.getElementById('practiceAnswers').addEventListener('click', (e) => {
+      const btn = e.target.closest('.answer-option');
+      if (!btn || btn.disabled || btn.classList.contains('wrong')) return;
+      const btns = [...document.querySelectorAll('#practiceAnswers .answer-option')];
+      btns.forEach(b => { if (!b.classList.contains('wrong')) b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      pSelected = btns.indexOf(btn);
+      document.getElementById('practiceSubmit').disabled = false;
+    }, true);
+
+    function nextPractice() {
+      pCurrent++;
+      if (pCurrent >= data.questions.length) {
+        showCompletion();
+      } else {
+        renderPractice();
+      }
+    }
+
+    function showCompletion() {
+      document.getElementById('practiceProgress').style.width = '100%';
+      document.getElementById('practiceBlock').style.display = 'none';
+      const comp = document.getElementById('completionScreen');
+      comp.classList.add('show');
+      document.getElementById('completionScore').textContent =
+        `You got ${correctCount} out of 5 correct. Keep it up!`;
+
+      const mods = MODULE_DATA[level];
+      const nextBtn = document.getElementById('nextModuleBtn');
+      if (modIndex >= mods.length - 1) {
+        nextBtn.textContent = '🎉 All Modules Done!';
+        nextBtn.onclick = () => window.location.href = `home.html?level=${level}`;
+      }
+    }
+
+    function goNextModule() {
+      const next = modIndex + 1;
+      if (next < MODULE_DATA[level].length) {
+        window.location.href = `module.html?level=${level}&module=${next}`;
+      } else {
+        window.location.href = `home.html?level=${level}`;
+      }
+    }
+
+    function goBackModules() {
+      window.location.href = `home.html?level=${level}`;
+    }
+  </script>
+</body>
+</html>
