@@ -1,254 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Digital Germany — Travel & Immigration Experience</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>German Learning Platform</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-  <body data-page="landing">
-    <header class="site-header">
-      <div class="container nav-row">
-        <h1 class="brand">Willkommen — Digital Germany</h1>
-        <nav>
-          <a href="home.html">Home</a>
-          <a href="#apply">Apply for Visa</a>
-          <a href="#phrases">Learn Phrases</a>
-          <a href="#cities">Visit Cities</a>
-          <a href="#tech">Tech in Germany</a>
-          <a href="https://en.wikipedia.org/wiki/Germany" target="_blank" rel="noopener noreferrer">About Germany</a>
-        </nav>
-      <div class="container">
-        <h1>Willkommen! Learn German by Level</h1>
-        <p class="subtitle">Choose your level, then follow notes → examples → practice quizzes.</p>
-      </div>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deutsch Lernen</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="welcome-page">
 
-    <main>
-      <section class="hero">
-        <div class="container hero-grid">
-          <div>
-            <h2>Travel, Learn, and Imagine life in Germany — from your screen</h2>
-            <p class="lead">A beautiful digital immigration + travel experience. Explore cities, practice phrases, and submit a playful visa request.</p>
-            <a class="btn" href="#apply">Start the Journey</a>
-          </div>
-          <div class="flag-card parallax">
-            <div class="flag black"></div>
-            <div class="flag red"></div>
-            <div class="flag gold"></div>
-          </div>
-    <main class="container page-section">
-      <section class="panel">
-        <h2>Choose Your Language Level</h2>
-        <div class="level-grid">
-          <a class="level-card level-a1" href="level.html?level=a1">
-            <h3>A1 – Beginner</h3>
-            <p>Start from greetings, basic grammar, and daily conversation.</p>
-          </a>
-          <a class="level-card level-a2" href="level.html?level=a2">
-            <h3>A2 – Elementary</h3>
-            <p>Build confidence with routine communication and short texts.</p>
-          </a>
-          <a class="level-card level-b1" href="level.html?level=b1">
-            <h3>B1 – Intermediate</h3>
-            <p>Expand to opinions, plans, and structured communication.</p>
-          </a>
-        </div>
-      </section>
+  <div class="deco-circle deco-1"></div>
+  <div class="deco-circle deco-2"></div>
+  <div class="deco-circle deco-3"></div>
 
-      <section id="apply" class="container section">
-        <h3>Apply for a (Playful) Visa</h3>
-        <p class="muted">This is a fake form for fun — no real immigration process is initiated.</p>
-        <form id="visa-form" class="card form-card">
-          <div class="row">
-            <label>Full name<input name="name" required></label>
-            <label>Nationality<input name="nationality" required></label>
-          </div>
-          <div class="row">
-            <label>Intended stay (days)<input name="days" type="number" min="1" value="14" required></label>
-            <label>Main reason for visit
-              <select name="reason">
-                <option>Tourism</option>
-                <option>Work</option>
-                <option>Study</option>
-                <option>Family</option>
-              </select>
-            </label>
-          </div>
-          <label>Short motivation (why Germany?)
-            <textarea name="motivation" rows="3"></textarea>
-          </label>
-          <div class="form-actions">
-            <button type="submit" class="btn primary">Submit Application</button>
-            <button type="button" id="clear-btn" class="btn ghost">Clear</button>
-          </div>
-        </form>
-        <div id="visa-result" class="card result-card hidden"></div>
-      </section>
+  <div class="welcome-container">
+    <div class="welcome-badge">🇩🇪 Deutsch Lernen</div>
 
-      <section id="phrases" class="container section dark">
-        <h3>Learn Basic German Phrases</h3>
-        <p class="muted">Click any phrase to hear it (using your browser's speech synthesis).</p>
-        <div class="phrases-grid">
-          <div class="phrase card" data-text="Willkommen">
-            <strong>Willkommen</strong>
-            <span class="small">Welcome</span>
-            <button class="btn tiny speak">Listen</button>
-          </div>
-          <div class="phrase card" data-text="Danke">
-            <strong>Danke</strong>
-            <span class="small">Thank you</span>
-            <button class="btn tiny speak">Listen</button>
-          </div>
-          <div class="phrase card" data-text="Guten Tag">
-            <strong>Guten Tag</strong>
-            <span class="small">Good day / Hello</span>
-            <button class="btn tiny speak">Listen</button>
-          </div>
-          <div class="phrase card" data-text="Sprechen Sie Englisch?">
-            <strong>Sprechen Sie Englisch?</strong>
-            <span class="small">Do you speak English?</span>
-            <button class="btn tiny speak">Listen</button>
-          </div>
-          <div class="phrase card" data-text="Ich heiße ...">
-            <strong>Ich heiße ...</strong>
-            <span class="small">My name is ...</span>
-            <button class="btn tiny speak">Listen</button>
-          </div>
-          <div class="phrase card" data-text="Wo ist der Bahnhof?">
-            <strong>Wo ist der Bahnhof?</strong>
-            <span class="small">Where is the train station?</span>
-            <button class="btn tiny speak">Listen</button>
-          </div>
-          <div class="phrase card" data-text="Prost">
-            <strong>Prost</strong>
-            <span class="small">Cheers (when toasting)</span>
-            <button class="btn tiny speak">Listen</button>
-          </div>
-          <div class="phrase card" data-text="Entschuldigung">
-            <strong>Entschuldigung</strong>
-            <span class="small">Excuse me / Sorry</span>
-            <button class="btn tiny speak">Listen</button>
-          </div>
-          <div class="phrase card flip" data-text="Ich verstehe nicht">
-            <strong>Ich verstehe nicht</strong>
-            <span class="small">I don't understand</span>
-            <button class="btn tiny speak">Listen</button>
-          </div>
-        </div>
-      </section>
+    <h1 class="welcome-title">
+      Learn German<br/><em>the right way.</em>
+    </h1>
 
-      <section id="cities" class="container section">
-        <h3>Visit German Cities</h3>
-        <p class="muted">Explore highlights and quick facts.</p>
-        <div class="cities-grid">
-          <article class="city card tilt" data-image="https://images.unsplash.com/photo-1508057198894-247b23fe5ade?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=fb1fb0d41a1b1aa8a7e0c6a298f4d1be" data-link="https://en.wikipedia.org/wiki/Brandenburg_Gate">
-            <img src="https://images.unsplash.com/photo-1508057198894-247b23fe5ade?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=fb1fb0d41a1b1aa8a7e0c6a298f4d1be" alt="Brandenburg Gate, Berlin">
-            <h4>Berlin</h4>
-            <p class="small">Capital city known for history, culture, and nightlife.</p>
-            <ul>
-              <li>Brandenburg Gate</li>
-              <li>Museum Island</li>
-              <li>Vibrant startup scene</li>
-            </ul>
-            <div style="margin-top:8px"><a class="btn ghost" href="#" data-ext="https://en.wikipedia.org/wiki/Berlin">Learn more (new tab)</a></div>
-      <section class="panel">
-        <h2>Did you know?</h2>
-        <div class="fact-grid">
-          <article class="fact-card">
-            <h3>Long words are normal</h3>
-            <p>German combines words to create very specific meanings — like a language puzzle!</p>
-          </article>
-          <article class="city card tilt" data-image="https://images.unsplash.com/photo-1542038784456-0a84b4b9b4a0?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=9c2d70d3d6f8a5f7b0f3b7700b7f1c5a" data-link="https://en.wikipedia.org/wiki/Munich">
-            <img src="https://images.unsplash.com/photo-1542038784456-0a84b4b9b4a0?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=9c2d70d3d6f8a5f7b0f3b7700b7f1c5a" alt="Munich skyline and church">
-            <h4>Munich</h4>
-            <p class="small">Bavarian capital famous for engineering, beer gardens, and Oktoberfest.</p>
-            <ul>
-              <li>Marienplatz & Glockenspiel</li>
-              <li>BMW Welt & museums</li>
-              <li>Nearby Alps</li>
-            </ul>
-            <div style="margin-top:8px"><a class="btn ghost" href="#" data-ext="https://en.wikipedia.org/wiki/Munich">Learn more (new tab)</a></div>
-          <article class="fact-card">
-            <h3>Umlauts matter</h3>
-            <p>ä, ö, ü are different sounds, not decorations. They can change meaning entirely.</p>
-          </article>
-          <article class="city card tilt" data-image="https://images.unsplash.com/photo-1505765056593-9a9f3b3ea0f3?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=1f3d2c3b6a1f4d9a5a2f3e7b6f1c9b2c" data-link="https://en.wikipedia.org/wiki/Hamburg">
-            <img src="https://images.unsplash.com/photo-1505765056593-9a9f3b3ea0f3?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=1f3d2c3b6a1f4d9a5a2f3e7b6f1c9b2c" alt="Hamburg harbor">
-            <h4>Hamburg</h4>
-            <p class="small">Major port city with strong maritime history and modern architecture.</p>
-            <ul>
-              <li>Elbphilharmonie concert hall</li>
-              <li>Historic Speicherstadt</li>
-              <li>Harbor tours</li>
-            </ul>
-            <div style="margin-top:8px"><a class="btn ghost" href="#" data-ext="https://en.wikipedia.org/wiki/Hamburg">Learn more (new tab)</a></div>
-          <article class="fact-card">
-            <h3>Nouns are capitalized</h3>
-            <p>In German, all nouns start with a capital letter: <strong>das Haus</strong>, <strong>die Stadt</strong>.</p>
-          </article>
-          <article class="city card tilt" data-image="https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=3b9f98e8c2d6b6a3d3f3b7b0b1a2c4d5" data-link="https://en.wikipedia.org/wiki/Frankfurt">
-            <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=3b9f98e8c2d6b6a3d3f3b7b0b1a2c4d5" alt="Frankfurt skyline">
-            <h4>Frankfurt</h4>
-            <p class="small">Financial hub with a striking skyline and strong commerce links.</p>
-            <ul>
-              <li>European Central Bank</li>
-              <li>Römer & historic old town</li>
-              <li>International trade fairs</li>
-            </ul>
-            <div style="margin-top:8px"><a class="btn ghost" href="#" data-ext="https://en.wikipedia.org/wiki/Frankfurt">Learn more (new tab)</a></div>
-          <article class="fact-card">
-            <h3>Culture tip</h3>
-            <p>"Brotzeit" means a simple meal/snack break — food culture and language often mix together.</p>
-          </article>
-        </div>
-        <!-- Modal for city images -->
-        <div id="gallery-modal" class="modal" aria-hidden="true">
-          <div class="content card">
-            <button class="close" id="modal-close">Close</button>
-            <img id="modal-image" src="" alt="City image">
-            <p id="modal-caption" class="small muted"></p>
-          </div>
-        </div>
-      </section>
+    <p class="welcome-subtitle animate-in-delay-2">
+      Discover your level in 2 minutes, then dive into structured modules built just for you.
+    </p>
 
-      <section id="tech" class="container section dark">
-        <h3>Tech in Germany</h3>
-        <p class="muted">Germany is a global leader in automotive engineering, industrial machinery, and increasingly in AI research.</p>
-        <div class="tech-grid">
-          <div class="tech card">
-            <h4>Automotive</h4>
-            <p>Home to iconic brands like BMW, Mercedes-Benz, Audi, and Volkswagen — strong on EV and engineering innovation.</p>
-          </div>
-          <div class="tech card">
-            <h4>Engineering</h4>
-            <p>Robust mechanical and industrial engineering traditions with precision manufacturing and large-scale R&D.</p>
-          </div>
-          <div class="tech card">
-            <h4>AI & Research</h4>
-            <p>Growing AI hubs in Berlin, Munich, and elsewhere with close industry-academia collaboration.</p>
-          </div>
-        </div>
-      </section>
-    </main>
+    <div class="animate-in-delay-3">
+      <button class="btn-primary" onclick="window.location.href='test_root.html'">
+        Start Level Test <span class="btn-arrow">→</span>
+      </button>
+    </div>
 
-    <footer class="site-footer">
-      <div class="container footer-row">
-        <div>© Digital Germany — An educational demo</div>
-        <div class="muted">Phrases: Willkommen · Danke · Guten Tag</div>
-      </div>
-    </footer>
+    <div class="welcome-meta">
+      <span>✓ No account needed</span>
+      <span>✓ ~2 minutes</span>
+      <span>✓ Instant result</span>
+    </div>
 
-    <footer class="site-footer">German Learning Platform • Friendly, structured, and expandable</footer>
-    <script src="script.js"></script>
-  </body>
+    <div class="welcome-levels">
+      <div class="level-pill a1">A1 · Beginner</div>
+      <div class="level-pill b1">B1 · Intermediate</div>
+      <div class="level-pill c1">C1 · Advanced</div>
+    </div>
+  </div>
+
+</body>
 </html>
