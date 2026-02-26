@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Deutsch Lernen</title>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{min-height:100vh;font-family:'Inter',sans-serif;background:#0a0a0a;overflow-x:hidden}
+
+/* ── Gradient Background ── */
+.app-bg{
+  min-height:100vh;width:100%;position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  background:radial-gradient(ellipse at top left,#8B0000 0%,#3a0000 25%,#0a0a0a 55%,#1a0a00 75%,#8B3A00 100%);
+}
+
+/* ── Screens ── */
+.screen{display:none;width:100%;min-height:100vh}
+.screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px}
+
+/* ── White Card ── */
+.card{
+  background:#f5f0eb;border-radius:24px;width:100%;max-width:760px;
+  padding:52px;box-shadow:0 32px 80px rgba(0,0,0,0.5);position:relative;
+}
+@media(max-width:600px){.card{padding:36px 24px;border-radius:18px}}
+
+/* ── Nav Bar ── */
+.top-nav{width:100%;max-width:760px;display:flex;align-items:center;justify-content:space-between;padding:20px 4px 4px}
+.nav-back{
+  display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.85);
+  font-family:'Epilogue',sans-serif;font-size:0.95rem;font-weight:500;
+  cursor:pointer;border:none;background:none;transition:color 0.2s;
+}
+.nav-back:hover{color:#fff}
+.nav-title{color:#fff;font-family:'Epilogue',sans-serif;font-weight:700;font-size:1rem;letter-spacing:0.02em}
+
+/* ── Typography ── */
+h1{font-family:'Epilogue',sans-serif;font-weight:900;font-size:clamp(2rem,5vw,2.8rem);color:#111;line-height:1.1;letter-spacing:-0.02em}
+h2{font-family:'Epilogue',sans-serif;font-weight:900;font-size:clamp(1.6rem,4vw,2.2rem);color:#111;line-height:1.15;letter-spacing:-0.02em}
+h3{font-family:'Epilogue',sans-serif;font-weight:700;font-size:1rem;color:#222}
+p{color:#555;font-size:0.97rem;line-height:1.65}
+
+/* ── Icon Box ── */
+.icon-box{width:72px;height:72px;background:#e8e2db;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 28px;font-size:2rem}
+
+/* ── Buttons ── */
+.btn-dark{
+  display:inline-flex;align-items:center;gap:10px;padding:17px 32px;
+  background:#111;color:#fff;font-family:'Epilogue',sans-serif;font-weight:700;
+  font-size:1rem;border:none;border-radius:50px;cursor:pointer;transition:all 0.2s;
+}
+.btn-dark:hover{background:#333;transform:translateY(-1px)}
+.btn-dark:active{transform:translateY(0)}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:8px;padding:13px 26px;
+  background:transparent;color:#444;font-family:'Epilogue',sans-serif;font-weight:600;
+  font-size:0.9rem;border:1.5px solid #ccc;border-radius:50px;cursor:pointer;transition:all 0.2s;
+}
+.btn-outline:hover{border-color:#888;color:#111}
+
+/* ── Progress Dots ── */
+.prog-dots{display:flex;gap:8px;justify-content:flex-end;margin-bottom:24px}
+.dot{width:28px;height:8px;border-radius:4px;background:#ddd;transition:all 0.3s}
+.dot.active{background:#111;width:36px}
+.dot.done{background:#888}
+
+/* ── Test Label ── */
+.q-label{font-family:'Epilogue',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-bottom:14px}
+.q-text{font-family:'Epilogue',sans-serif;font-weight:800;font-size:clamp(1.1rem,3vw,1.45rem);color:#111;line-height:1.35;margin-bottom:28px}
+
+/* ── Answers ── */
+.answers{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.answer-opt{
+  width:100%;padding:17px 22px;background:#fff;border:1.5px solid #e0dbd4;
+  border-radius:14px;color:#222;font-family:'Inter',sans-serif;font-size:0.97rem;
+  font-weight:400;text-align:left;cursor:pointer;transition:all 0.18s;
+}
+.answer-opt:hover:not(:disabled):not(.correct):not(.wrong){border-color:#999;background:#fafafa}
+.answer-opt.selected{border-color:#111;background:#fff;font-weight:500}
+.answer-opt.correct{border-color:#16a34a;background:#f0fdf4;color:#15803d;font-weight:600}
+.answer-opt.wrong{border-color:#dc2626;background:#fef2f2;color:#b91c1c}
+.answer-opt:disabled{cursor:default}
+
+/* ── Hint Box ── */
+.hint-box{
+  display:none;align-items:flex-start;gap:12px;background:#fffbeb;
+  border:1.5px solid #f59e0b;border-radius:12px;padding:14px 18px;margin-bottom:16px;
+  animation:fadeUp 0.25s ease;
+}
+.hint-box.show{display:flex}
+.hint-title{font-family:'Epilogue',sans-serif;font-weight:700;font-size:0.85rem;color:#92400e;margin-bottom:3px}
+.hint-box p{color:#78350f;font-size:0.88rem;margin:0}
+
+/* ── Result ── */
+#screen-result .card{text-align:center}
+.result-emoji{font-size:3.5rem;margin-bottom:20px}
+.result-level-big{
+  font-family:'Epilogue',sans-serif;font-weight:900;font-size:clamp(4rem,12vw,7rem);line-height:1;
+  background:linear-gradient(135deg,#8B0000,#cc4400);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;
+}
+.result-name{font-family:'Epilogue',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#888;margin-bottom:20px}
+.score-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.5px solid #ddd;border-radius:50px;padding:8px 20px;font-size:0.88rem;font-weight:600;color:#444;margin-bottom:16px}
+.result-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+
+/* ── Modules Screen ── */
+#screen-modules{justify-content:flex-start;padding:0}
+.modules-wrap{width:100%;max-width:1000px;padding:0 16px 40px;margin:0 auto}
+.modules-nav-bar{display:flex;align-items:center;justify-content:space-between;padding:24px 0 16px}
+.modules-hero{background:#f5f0eb;border-radius:24px;padding:48px 48px 52px;box-shadow:0 32px 80px rgba(0,0,0,0.5)}
+@media(max-width:600px){.modules-hero{padding:32px 22px}}
+.curriculum-lbl{font-family:'Epilogue',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#888;margin-bottom:10px;text-align:center}
+.modules-hero h2{text-align:center;margin-bottom:14px}
+.modules-hero>p{text-align:center;max-width:520px;margin:0 auto 40px;font-size:0.97rem}
+.modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+@media(max-width:500px){.modules-grid{grid-template-columns:1fr}}
+
+.module-card{
+  background:#fff;border:1.5px solid #e8e2db;border-radius:16px;padding:26px 22px 22px;
+  cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;gap:10px;text-align:left;
+}
+.module-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,0.12);border-color:#bbb}
+.module-icon{width:40px;height:40px;background:#f0ebe4;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:4px}
+.module-card h3{font-size:0.95rem;color:#111;line-height:1.4}
+.start-row{
+  display:flex;align-items:center;gap:8px;font-family:'Epilogue',sans-serif;font-size:0.72rem;
+  font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#666;
+  margin-top:auto;padding-top:10px;border-top:1px solid #ede8e1;
+}
+.start-icon{width:22px;height:22px;border:1.5px solid #999;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#666}
+
+/* ── Module Learning Screen ── */
+#screen-module{justify-content:flex-start;padding:0 0 60px}
+.module-wrap{width:100%;max-width:760px;padding:0 16px}
+.module-top-bar{display:flex;align-items:center;justify-content:space-between;padding:24px 0 16px}
+
+/* Notes */
+.notes-card{background:#f5f0eb;border-radius:24px;padding:40px 44px;margin-bottom:20px;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+@media(max-width:600px){.notes-card{padding:28px 22px}}
+.notes-sub{display:flex;align-items:center;gap:8px;color:#888;font-size:0.88rem;margin-bottom:28px}
+.notes-card h2{margin-bottom:10px}
+.notes-card h3{font-size:1rem;color:#333;margin:22px 0 8px}
+.notes-card p{color:#444;font-size:0.95rem;line-height:1.75;margin-bottom:14px}
+.notes-card ul{padding-left:0;margin-bottom:14px;list-style:none}
+.notes-card ul li{color:#444;font-size:0.95rem;line-height:1.7;padding:4px 0 4px 20px;position:relative}
+.notes-card ul li::before{content:'•';position:absolute;left:4px;color:#888}
+.note-box{background:#fff8e8;border-left:3px solid #d97706;border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0}
+.tip-box{background:#fff0f0;border-left:3px solid #cc2200;border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0}
+.box-lbl{font-family:'Epilogue',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px}
+.note-box .box-lbl{color:#b45309}
+.tip-box .box-lbl{color:#cc2200}
+.note-box p,.tip-box p{color:#555;font-size:0.9rem;margin:0}
+.start-practice-wrap{text-align:center;padding:32px 0 8px;border-top:1px solid #e0dbd4;margin-top:32px}
+
+/* Practice */
+.practice-card{background:#f5f0eb;border-radius:24px;padding:36px 44px;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+@media(max-width:600px){.practice-card{padding:24px 20px}}
+.practice-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.practice-lbl{font-family:'Epilogue',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#888}
+.pdots{display:flex;gap:7px}
+.pdot{width:26px;height:8px;border-radius:4px;background:#ddd;transition:all 0.3s}
+.pdot.active{background:#111;width:34px}
+.pdot.done{background:#888}
+
+/* Completion */
+.completion-card{
+  background:#f5f0eb;border-radius:24px;padding:60px 44px;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.4);display:none;
+}
+.completion-card.show{display:block;animation:fadeUp 0.4s ease}
+.completion-card h2{margin-bottom:10px}
+.completion-card p{margin-bottom:32px}
+.completion-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp 0.35s ease both}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app-bg">
+
+<!-- ══════════════════════════════
+     SCREEN 1: WELCOME
+══════════════════════════════ -->
+<div class="screen active" id="screen-welcome">
+  <div class="card fade-in" style="text-align:center">
+    <div class="icon-box">🧠</div>
+    <h1>Discover Your German Level</h1>
+    <p style="max-width:420px;margin:16px auto 36px;font-size:1.05rem">
+      Take our quick 6-question placement test to find the perfect starting point for your language journey.
+    </p>
+    <button class="btn-dark" onclick="startTest()">Start Placement Test &nbsp;→</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN 2: PLACEMENT TEST
+══════════════════════════════ -->
+<div class="screen" id="screen-test">
+  <div class="top-nav">
+    <div style="width:60px"></div>
+    <span class="nav-title">Placement Test</span>
+    <div style="width:60px"></div>
+  </div>
+  <div class="card fade-in">
+    <div class="prog-dots" id="testDots"></div>
+    <div class="q-label" id="testLabel">QUESTION 1 OF 6</div>
+    <p class="q-text" id="testQ"></p>
+    <div class="answers" id="testAnswers"></div>
+    <div class="hint-box" id="testHint">
+      <div><div class="hint-title">Hint</div><p id="testHintText"></p></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:8px">
+      <button class="btn-dark" id="testSubmit" onclick="submitTest()" disabled>Submit →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN 3: RESULT
+══════════════════════════════ -->
+<div class="screen" id="screen-result">
+  <div class="card fade-in">
+    <div class="result-emoji">🎯</div>
+    <div class="score-chip">⭐ <span id="resultScore">0 / 6 correct</span></div>
+    <p style="font-size:0.8rem;color:#888;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px">Your Level</p>
+    <div class="result-level-big" id="resultBig">A1</div>
+    <div class="result-name" id="resultName">Beginner</div>
+    <p id="resultDesc" style="max-width:400px;margin:0 auto 32px"></p>
+    <div class="result-btns">
+      <button class="btn-dark" onclick="goToModules()">Go to My Modules →</button>
+      <button class="btn-outline" onclick="startTest()">↺ Retake Test</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN 4: MODULES
+══════════════════════════════ -->
+<div class="screen" id="screen-modules">
+  <div class="modules-wrap">
+    <div class="modules-nav-bar">
+      <button class="nav-back" onclick="showScreen('screen-result')">← Back</button>
+      <span class="nav-title" id="modulesNavTitle">Level A1</span>
+      <div style="width:60px"></div>
+    </div>
+    <div class="modules-hero fade-in">
+      <p class="curriculum-lbl">CURRICULUM</p>
+      <h2 id="modulesTitle">Level A1 Modules</h2>
+      <p id="modulesSubtitle"></p>
+      <div class="modules-grid" id="modulesGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN 5: MODULE
+══════════════════════════════ -->
+<div class="screen" id="screen-module">
+  <div class="module-wrap">
+    <div class="module-top-bar">
+      <button class="nav-back" onclick="showScreen('screen-modules')">← Back</button>
+      <span class="nav-title" id="moduleNavTitle">Module</span>
+      <div style="width:60px"></div>
+    </div>
+
+    <!-- Notes -->
+    <div class="notes-card fade-in" id="notesCard">
+      <div class="notes-sub">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        Study the notes below, then test your knowledge.
+      </div>
+      <div id="notesBody"></div>
+      <div class="start-practice-wrap">
+        <button class="btn-dark" onclick="startPractice()">Start Practice →</button>
+      </div>
+    </div>
+
+    <!-- Practice -->
+    <div class="practice-card fade-in" id="practiceCard" style="display:none">
+      <div class="practice-top">
+        <span class="practice-lbl">PRACTICE</span>
+        <div class="pdots" id="pdots"></div>
+      </div>
+      <p class="q-text" id="practiceQ"></p>
+      <div class="answers" id="practiceAnswers"></div>
+      <div class="hint-box" id="practiceHint">
+        <div><div class="hint-title">Hint</div><p id="practiceHintTxt"></p></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:16px">
+        <button class="btn-dark" id="practiceSubmit" onclick="submitPractice()" disabled>Submit →</button>
+      </div>
+    </div>
+
+    <!-- Completion -->
+    <div class="completion-card" id="completionCard">
+      <div style="font-size:3rem;margin-bottom:20px">🏆</div>
+      <h2>Module Complete!</h2>
+      <p id="completionMsg"></p>
+      <div class="completion-btns">
+        <button class="btn-dark" id="nextModBtn">Next Module →</button>
+        <button class="btn-outline" onclick="showScreen('screen-modules')">← All Modules</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app-bg -->
+
+<script>
+// ═══════════════════ DATA ═══════════════════
+
+const PLACEMENT=[
+  {text:'How do you say "Good morning" in German?',opts:['Guten Abend','Guten Morgen','Gute Nacht','Auf Wiedersehen'],correct:1,hint:'"Morgen" is the German word for morning.'},
+  {text:'Fill in: "Ich ___ Student." (I am a student.)',opts:['ist','bist','bin','sind'],correct:2,hint:'"Ich" uses "bin" — first-person singular of sein (to be).'},
+  {text:'Which uses the Perfekt tense correctly?',opts:['Ich habe gestern ins Kino gegangen.','Ich bin gestern ins Kino gegangen.','Ich war gestern ins Kino gegangen.','Ich hatte gestern ins Kino gegangen.'],correct:1,hint:'Movement verbs like gehen use "sein" as auxiliary in Perfekt, not "haben".'},
+  {text:'Correct word order: "Obwohl es regnete, ___."',opts:['...gingen wir spazieren.','...wir gingen spazieren.','...spazieren gingen wir.','...wir spazieren gingen.'],correct:0,hint:'After "obwohl" verb-final order applies; the following main clause uses V2 order.'},
+  {text:'"Seine Aussagen entbehrten jeder ___." (His statements lacked any basis.)',opts:['Grundlage','Untergrund','Fundament','Hintergrund'],correct:0,hint:'"Grundlage" = basis/foundation abstractly. "Einer Sache entbehren" = to lack.'},
+  {text:'Correct Konjunktiv II in formal reported speech:',opts:['Er sagte, er geht morgen.','Er sagte, er würde morgen gehen.','Er sagte, er geht morgen gehen.','Er sagte, er ist morgen gegangen.'],correct:1,hint:'"Würde + infinitive" signals reported/distanced content in indirect speech.'}
+];
+
+const LEVEL_INFO={
+  A1:{name:'Beginner',desc:"You're just starting out — exciting! Your A1 modules will build a solid foundation with greetings, grammar, and everyday vocabulary.",sub:"Master the fundamentals of A1 German. Complete the modules sequentially to build a strong foundation."},
+  B1:{name:'Intermediate',desc:"Good grasp of the basics! Your B1 modules help you express ideas, handle everyday situations, and tackle more complex grammar.",sub:"Expand your German with B1 grammar, tenses, and natural expression. Work through each module to level up your fluency."},
+  C1:{name:'Advanced',desc:"Impressive command of German! Your C1 modules will sharpen nuance, formal writing, and complex grammatical structures.",sub:"Refine your German to near-native precision — advanced grammar, formal register, and idiomatic expression."}
+};
+
+const MODULES={
+  A1:[
+    {title:'Greetings & Introductions',sub:'Hello, names, and basic phrases',
+     notes:`<h2>Greetings & Introductions</h2><p>In German, greetings depend on time of day and formality level.</p><ul><li><strong>Guten Morgen</strong> — Good morning (until noon)</li><li><strong>Guten Tag</strong> — Good day / Hello (formal)</li><li><strong>Guten Abend</strong> — Good evening</li><li><strong>Hallo</strong> — Hello (informal)</li><li><strong>Tschüss / Auf Wiedersehen</strong> — Goodbye (informal / formal)</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>"Guten Tag" is a safe all-purpose formal greeting. Use "Hallo" only with friends or peers.</p></div><p>To introduce yourself:</p><ul><li><strong>Ich heiße …</strong> — My name is …</li><li><strong>Ich bin …</strong> — I am …</li><li><strong>Wie heißen Sie?</strong> — What is your name? (formal)</li><li><strong>Wie heißt du?</strong> — What is your name? (informal)</li></ul><div class="tip-box"><div class="box-lbl">Tip:</div><p>Use "Sie" (capital S) with strangers, teachers, or professionals. Use "du" with friends and family.</p></div><p>To ask where someone is from: <strong>Woher kommen Sie?</strong> — Answer: <strong>Ich komme aus Deutschland.</strong></p>`,
+     questions:[
+       {q:'What does "Guten Morgen" mean?',opts:['Good evening','Good night','Good morning','Good afternoon'],correct:2,hint:'"Morgen" = morning.'},
+       {q:'How do you say "My name is Maria"?',opts:['Ich bin Maria heißt.','Ich heiße Maria.','Maria bin ich heiße.','Mein Name heiße Maria.'],correct:1,hint:'"Ich heiße" = "I am called".'},
+       {q:'Which greeting is INFORMAL?',opts:['Guten Tag','Guten Morgen','Hallo','Guten Abend'],correct:2,hint:'"Hallo" is the casual everyday greeting.'},
+       {q:'Meeting your professor — which pronoun?',opts:['du','ihr','Sie','dich'],correct:2,hint:'"Sie" (capital S) is the formal address in German.'},
+       {q:'How do you say "Goodbye" formally?',opts:['Tschüss','Ciao','Hallo','Auf Wiedersehen'],correct:3,hint:'"Auf Wiedersehen" = "until we see each other again".'}
+     ]},
+    {title:'Numbers & Colors',sub:'Count 1–100, name basic colors',
+     notes:`<h2>Numbers & Colors</h2><p>Numbers and colors are essential early vocabulary.</p><h3>Numbers 1–20</h3><ul><li>1–10: <strong>eins, zwei, drei, vier, fünf, sechs, sieben, acht, neun, zehn</strong></li><li>11–20: <strong>elf, zwölf, dreizehn, vierzehn, fünfzehn, sechzehn, siebzehn, achtzehn, neunzehn, zwanzig</strong></li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>Numbers above 20 are "units + und + tens": 21 = <strong>einundzwanzig</strong>.</p></div><h3>Common Colors</h3><ul><li>rot · blau · gelb · grün · schwarz · weiß · grau · braun</li></ul><div class="tip-box"><div class="box-lbl">Tip:</div><p>Colors as adjectives change by gender: "Ein rotes Auto" (neuter), "eine rote Rose" (feminine).</p></div>`,
+     questions:[
+       {q:'German word for the number 7?',opts:['Sechs','Acht','Sieben','Neun'],correct:2,hint:'Count: eins, zwei, drei, vier, fünf, sechs, sieben.'},
+       {q:'How do you say "black"?',opts:['Weiß','Rot','Grün','Schwarz'],correct:3,hint:'The German flag is schwarz-rot-gold.'},
+       {q:'What is 21 in German?',opts:['Zwanzigein','Einundzwanzig','Einzwanzig','Zwanzigeins'],correct:1,hint:'German: unit + und + ten.'},
+       {q:'Which word means "yellow"?',opts:['Gelb','Grau','Blau','Braun'],correct:0,hint:'The color of the sun.'},
+       {q:'"Three hundred" in German?',opts:['Dreizehn','Dreißig','Dreihundert','Dreiundert'],correct:2,hint:'"Hundert" = hundred. Drei + hundert.'}
+     ]},
+    {title:'Articles & Gender',sub:'der, die, das — noun gender',
+     notes:`<h2>Articles & Gender</h2><p>Every German noun has gender: masculine (der), feminine (die), or neuter (das). Learn the article with the noun.</p><ul><li><strong>der</strong> — masculine: der Mann (the man)</li><li><strong>die</strong> — feminine: die Frau (the woman)</li><li><strong>das</strong> — neuter: das Kind (the child)</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>Indefinite articles: <strong>ein</strong> (m/n), <strong>eine</strong> (f). Example: ein Mann, eine Frau, ein Kind.</p></div><p>Gender patterns:</p><ul><li>Endings <strong>-ung, -heit, -keit, -schaft</strong> → always feminine (die)</li><li>Endings <strong>-chen, -lein</strong> → always neuter (das)</li><li>Male persons/professions → usually masculine (der)</li></ul><div class="tip-box"><div class="box-lbl">Tip:</div><p>Always learn "der Tisch", not just "Tisch". The article saves you a lot of trouble later!</p></div>`,
+     questions:[
+       {q:'Article for "Frau" (woman)?',opts:['der','das','die','ein'],correct:2,hint:'"Frau" is feminine — female persons use "die".'},
+       {q:'Ending that signals feminine noun?',opts:['-chen','-heit','-lein','-ig'],correct:1,hint:'-heit, -keit, -schaft, -ung are always feminine.'},
+       {q:'Article for neuter nouns?',opts:['der','die','das','den'],correct:2,hint:'der (m), die (f), das (n).'},
+       {q:'"Das Mädchen" uses "das" because:',opts:['Girls are neuter','It ends in -chen — always neuter','It is an exception','Southern German rule'],correct:1,hint:'-chen and -lein endings always make nouns neuter.'},
+       {q:'Indefinite article for a masculine noun?',opts:['eine','ein','der','eines'],correct:1,hint:'Masculine and neuter share "ein".'}
+     ]},
+    {title:'Everyday Verbs',sub:'sein, haben, machen, gehen',
+     notes:`<h2>Everyday Verbs</h2><p>German verbs conjugate based on the subject. These are the most essential verbs.</p><h3>sein (to be)</h3><ul><li>ich bin · du bist · er/sie/es ist · wir sind · ihr seid · sie/Sie sind</li></ul><h3>haben (to have)</h3><ul><li>ich habe · du hast · er/sie/es hat · wir haben · ihr habt · sie/Sie haben</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>"sein" and "haben" are irregular — they must be memorized.</p></div><p>Regular verbs follow stem + ending:</p><ul><li><strong>machen</strong>: ich mache, du machst, er macht</li><li><strong>gehen</strong>: ich gehe, du gehst, er geht</li><li><strong>kommen</strong>: ich komme, du kommst, er kommt</li></ul><div class="tip-box"><div class="box-lbl">Tip:</div><p>The verb always comes SECOND in a German statement. "Heute <strong>gehe</strong> ich." — even when not the subject comes first!</p></div>`,
+     questions:[
+       {q:'Correct form of "sein" for "ich"?',opts:['ist','seid','sind','bin'],correct:3,hint:'"sein" is irregular: ich bin, du bist, er ist.'},
+       {q:'"Er ___ einen Bruder." (He has a brother.)',opts:['bin','hat','hast','haben'],correct:1,hint:'"Er" = 3rd person singular → "haben" becomes "hat".'},
+       {q:'Correct German word order?',opts:['Ich heute gehe.','Gehe ich heute.','Ich gehe heute.','Heute ich gehe.'],correct:2,hint:'Verb must be in second position.'},
+       {q:'What does "machen" mean?',opts:['to go','to come','to say','to do / make'],correct:3,hint:'"Ich mache Hausaufgaben" = I do homework.'},
+       {q:'"Wir ___ aus Berlin."',opts:['komme','kommt','kommen','kommst'],correct:2,hint:'"Wir" uses the same ending as the infinitive: -en.'}
+     ]},
+    {title:'Family & People',sub:'Describe family members',
+     notes:`<h2>Family & People</h2><p>Essential family vocabulary in German:</p><ul><li>die Mutter — mother · der Vater — father</li><li>die Eltern — parents · das Kind — child</li><li>der Bruder — brother · die Schwester — sister</li><li>die Großmutter / Oma · der Großvater / Opa</li><li>der Onkel — uncle · die Tante — aunt</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>"Geschwister" = siblings (plural only). "Ich habe Geschwister" = I have siblings.</p></div><p>Describing people:</p><ul><li>Mein Vater ist groß und freundlich.</li><li>Meine Schwester ist jung.</li></ul><div class="tip-box"><div class="box-lbl">Tip:</div><p>Possessive adjectives change by gender: "mein Bruder" (m) vs "meine Schwester" (f).</p></div>`,
+     questions:[
+       {q:'German for "mother"?',opts:['die Tochter','der Vater','die Mutter','die Schwester'],correct:2,hint:'"Mutter" sounds similar to "mother"!'},
+       {q:'"my brother" in German?',opts:['meine Bruder','meinen Bruder','mein Bruder','der mein Bruder'],correct:2,hint:'"Bruder" is masculine → "mein" (nominative, no extra ending).'},
+       {q:'"Geschwister" means:',opts:['parents','grandparents','siblings','cousins'],correct:2,hint:'"Geschwister" is always plural — brothers and/or sisters.'},
+       {q:'What does "der Großvater" mean?',opts:['great-uncle','grandfather','great-grandfather','uncle'],correct:1,hint:'"Groß" = big/great, "Vater" = father.'},
+       {q:'"Meine Schwester ___ jung."',opts:['haben','bin','sind','ist'],correct:3,hint:'"Schwester" is feminine singular → "ist".'}
+     ]}
+  ],
+  B1:[
+    {title:'Perfekt Tense',sub:'Talking about past events naturally',
+     notes:`<h2>The Perfekt Tense</h2><p>The Perfekt is the most common way to talk about the past in spoken German. Structure: <strong>haben/sein + Partizip II</strong></p><ul><li>Ich <strong>habe</strong> das Buch gelesen.</li><li>Er <strong>ist</strong> nach Hause gegangen.</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>Use <strong>sein</strong> with movement/change-of-state verbs: gehen, kommen, fahren, fliegen, werden, bleiben.</p></div><h3>Forming Partizip II</h3><ul><li>Regular: ge- + stem + -(e)t → gemacht, gespielt</li><li>Irregular: ge- + changed stem + -en → gegessen, geschrieben</li><li>Prefixed verbs (be-, er-, ver-): no extra ge- → besucht, erklärt</li></ul><div class="tip-box"><div class="box-lbl">Tip:</div><p>Partizip II always goes to the END: "Ich habe gestern viel <em>gearbeitet</em>."</p></div>`,
+     questions:[
+       {q:'Auxiliary for "fahren" in Perfekt?',opts:['haben','sein','werden','können'],correct:1,hint:'"fahren" is a movement verb — use "sein".'},
+       {q:'Partizip II of "machen"?',opts:['gemacht','gegemacht','macht','gemachen'],correct:0,hint:'Regular: ge- + stem + -t. Mach+t = gemacht.'},
+       {q:'Where does Partizip II go?',opts:['At the start','After the subject','Second position','At the very end'],correct:3,hint:'Partizip II is always sentence-final.'},
+       {q:'Correct sentence?',opts:['Ich habe nach Hause gegangen.','Ich bin nach Hause gegangen.','Ich sein nach Hause gegangen.','Ich habe nach Hause geht.'],correct:1,hint:'"gehen" is a movement verb → takes "sein".'},
+       {q:'Partizip II of "schreiben"?',opts:['geschreibt','schrieben','geschrieben','gewriten'],correct:2,hint:'"schreiben" is irregular: schrieb → geschrieben.'}
+     ]},
+    {title:'Modal Verbs',sub:'können, müssen, dürfen, wollen',
+     notes:`<h2>Modal Verbs</h2><p>Modal verbs express ability, permission, necessity, or desire. Always paired with an infinitive at the end.</p><ul><li><strong>können</strong> — can / to be able to</li><li><strong>müssen</strong> — must / to have to</li><li><strong>dürfen</strong> — may / to be allowed to</li><li><strong>wollen</strong> — to want to</li><li><strong>sollen</strong> — should / to be supposed to</li><li><strong>möchten</strong> — would like to (polite)</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>Modal verbs are irregular in singular: ich <strong>kann</strong>, du <strong>kannst</strong>, er <strong>kann</strong>.</p></div><p>Structure: <strong>Modal (position 2) + … + Infinitive (end)</strong></p><ul><li>Ich <strong>muss</strong> heute Abend <em>arbeiten</em>.</li><li>Kannst du mir <em>helfen</em>?</li></ul><div class="tip-box"><div class="box-lbl">Tip:</div><p>"nicht müssen" = don't have to. "nicht dürfen" = not allowed to. Very different meanings!</p></div>`,
+     questions:[
+       {q:'Modal meaning "to be allowed to"?',opts:['müssen','können','dürfen','sollen'],correct:2,hint:'"Darf ich...?" = the classic permission question.'},
+       {q:'"Er ___ heute nicht kommen."',opts:['will','darf','kann','muss'],correct:2,hint:'"Können" = ability/possibility.'},
+       {q:'Correct word order with modal?',opts:['Ich arbeiten muss heute.','Ich muss heute arbeiten.','Ich muss arbeiten heute.','Heute ich muss arbeiten.'],correct:1,hint:'Modal in position 2, infinitive at the end.'},
+       {q:'"Möchten" most closely means:',opts:['to have to','to be able to','would like to','should'],correct:2,hint:'"Ich möchte..." = polite desire.'},
+       {q:'"Du musst nicht kommen" means:',opts:["You can't come","You shouldn't come","You don't have to come","You must not come"],correct:2,hint:'"Müssen" negated = "don\'t have to".'}
+     ]},
+    {title:'Subordinate Clauses',sub:'weil, obwohl, dass, wenn',
+     notes:`<h2>Subordinate Clauses</h2><p>Subordinate clauses give extra information. Key rule: <strong>verb goes to the END</strong>.</p><ul><li><strong>weil</strong> (because): Ich lerne Deutsch, weil es interessant <em>ist</em>.</li><li><strong>obwohl</strong> (although): Sie kommt, obwohl sie müde <em>ist</em>.</li><li><strong>dass</strong> (that): Ich weiß, dass er Recht <em>hat</em>.</li><li><strong>wenn</strong> (when/if): Wenn es regnet, bleibe ich zu Hause.</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>Subordinate clauses are ALWAYS separated by a comma. Non-optional in German!</p></div><div class="tip-box"><div class="box-lbl">Tip:</div><p>If the sub-clause comes first, the main clause inverts: "Weil es regnet, <strong>bleibe ich</strong> zu Hause."</p></div>`,
+     questions:[
+       {q:'Conjunction for a causal clause?',opts:['obwohl','wenn','weil','dass'],correct:2,hint:'"Weil" = because.'},
+       {q:'Where does verb go in "weil" clause?',opts:['Second position','First position','At the end','Directly after weil'],correct:2,hint:'Subordinating conjunctions push verb to the very end.'},
+       {q:'Correct sentence?',opts:['Ich bleibe zuhause, weil regnet es.','Ich bleibe zuhause, weil es regnet.','Ich bleibe zuhause, weil es regnen.','Ich bleibe zuhause weil es regnet.'],correct:1,hint:'Verb-final + comma before "weil".'},
+       {q:'"Obwohl" means:',opts:['because','that','if','although'],correct:3,hint:'"Obwohl er krank ist, kommt er." = although he is sick, he comes.'},
+       {q:'"Ich weiß, dass ___."',opts:['er kommt','kommt er','er kommen','kommt er ist'],correct:0,hint:'In a "dass" clause, conjugated verb goes at the end.'}
+     ]},
+    {title:'Prepositions & Cases',sub:'Accusative vs. Dative in context',
+     notes:`<h2>Prepositions & Cases</h2><p>German prepositions require specific cases.</p><h3>Always Accusative</h3><ul><li>durch, für, gegen, ohne, um — memory: <strong>DOGFU</strong></li></ul><h3>Always Dative</h3><ul><li>aus, bei, mit, nach, seit, von, zu, gegenüber</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>Two-way prepositions (in, an, auf, über, unter, vor, hinter, neben, zwischen): Accusative for movement, Dative for location.</p></div><div class="tip-box"><div class="box-lbl">Tip:</div><p>Ask: movement (where to? → Accusative) or location (where? → Dative). "auf den Tisch legen" vs "auf dem Tisch liegen".</p></div>`,
+     questions:[
+       {q:'Preposition that always takes Accusative?',opts:['mit','bei','für','zu'],correct:2,hint:'"Für" is one of DOGFU.'},
+       {q:'"Ich fahre in die Stadt" — why Accusative?',opts:["Always accusative","'in' shows movement","Follows a modal","Fixed expression"],correct:1,hint:'Two-way prepositions: movement → Accusative.'},
+       {q:'"Ich gehe ___ Supermarkt."',opts:['in den','in dem','in das','zum'],correct:3,hint:'"Zum" = zu + dem. "Zu" always takes Dative.'},
+       {q:'Dative-only preposition?',opts:['durch','ohne','mit','für'],correct:2,hint:'"Mit" always takes Dative.'},
+       {q:'"Das Buch liegt auf ___ Tisch." (location)',opts:['dem','den','des','die'],correct:0,hint:'Location → Dative. Tisch is masculine → "dem".'}
+     ]},
+    {title:'Opinion & Argument',sub:'Express views and debate in German',
+     notes:`<h2>Expressing Opinions in German</h2><p>Key B1 phrases for expressing and countering arguments:</p><h3>Giving Your Opinion</h3><ul><li>Ich finde, dass… (I find/think that…)</li><li>Meiner Meinung nach… (In my opinion…)</li><li>Ich bin der Meinung, dass… (I am of the opinion that…)</li><li>Ich glaube/denke, dass… (I believe/think that…)</li></ul><h3>Agreeing & Disagreeing</h3><ul><li>Das stimmt. / Genau. (That's right. / Exactly.)</li><li>Da bin ich anderer Meinung. (I disagree.)</li><li>Ich sehe das anders. (I see it differently.)</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>"Meiner Meinung nach" — "nach" always comes at the END of this fixed phrase.</p></div><div class="tip-box"><div class="box-lbl">Tip:</div><p>Structure your argument: State view → Give reason (weil/denn) → Give example (zum Beispiel).</p></div>`,
+     questions:[
+       {q:'What does "Meiner Meinung nach" mean?',opts:['After my opinion','In my opinion','My opinion is','I have an opinion'],correct:1,hint:'"Meinung" = opinion. Fixed phrase.'},
+       {q:'Which phrase expresses DISAGREEMENT?',opts:['Das stimmt.','Genau!','Ich sehe das anders.','Ich finde auch.'],correct:2,hint:'"Anders" = differently.'},
+       {q:'"Ich finde, ___ das gut ist."',opts:['weil','dass','obwohl','wenn'],correct:1,hint:'"Ich finde, dass..." introduces opinion with "dass".'},
+       {q:'"Denn" is used to:',opts:['end a sentence','show contrast','give a reason (no verb-final)','ask a question'],correct:2,hint:'"Denn" = because, but verb stays in V2 position.'},
+       {q:'Which means "I think"?',opts:['Ich hoffe','Ich weiß','Ich denke','Ich soll'],correct:2,hint:'"Denken" = to think.'}
+     ]}
+  ],
+  C1:[
+    {title:'Konjunktiv II',sub:'Reported speech & hypothetical mood',
+     notes:`<h2>Konjunktiv II</h2><p>Expresses hypotheticals, wishes, polite requests, and reported speech.</p><h3>Formation</h3><ul><li><strong>würde + Infinitiv</strong>: Ich würde gerne kommen.</li><li>Strong forms: wäre (sein), hätte (haben), könnte (können), müsste (müssen)</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>In formal writing, prefer synthetic forms: "Er käme" not "Er würde kommen".</p></div><h3>Key Uses</h3><ul><li>Hypotheticals: Wenn ich Zeit hätte, würde ich reisen.</li><li>Polite requests: Könnten Sie mir bitte helfen?</li><li>Reported speech: Er sagte, er käme später.</li><li>Wishes: Wenn ich nur mehr Deutsch spräche!</li></ul><div class="tip-box"><div class="box-lbl">Tip:</div><p>Konjunktiv I is preferred in formal reported speech; use Konjunktiv II when Konjunktiv I is identical to indicative.</p></div>`,
+     questions:[
+       {q:'Konjunktiv II form of "sein"?',opts:['sei','würde sein','wäre','gewesen'],correct:2,hint:'"wäre" is the strong Konjunktiv II of "sein".'},
+       {q:'Polite request using Konjunktiv II?',opts:['Helfen Sie mir!','Können Sie mir helfen?','Könnten Sie mir helfen?','Sie helfen mir.'],correct:2,hint:'"Könnten" = Konjunktiv II of "können" — softens the request.'},
+       {q:'In a conditional sentence, Konjunktiv II appears:',opts:['only in main clause','only in wenn-clause','in both clauses','in neither'],correct:2,hint:'"Wenn ich Zeit hätte, würde ich kommen." — both clauses.'},
+       {q:'"Er käme" is used in reported speech because:',opts:["It's Konjunktiv I","It's Perfekt of kommen","It's Konjunktiv II signalling reported content","It's irregular present"],correct:2,hint:'"Käme" = Konjunktiv II of "kommen" in indirect speech.'},
+       {q:'Formal alternative to "Er würde kommen":',opts:['Er kann kommen','Er käme','Er ist gekommen','Er kommt'],correct:1,hint:'In formal writing, synthetic form "käme" is preferred.'}
+     ]},
+    {title:'Passive Voice',sub:'Vorgangspassiv and Zustandspassiv',
+     notes:`<h2>Passive Voice</h2><p>German has two passives: Vorgangspassiv (process) and Zustandspassiv (result state).</p><h3>Vorgangspassiv</h3><ul><li>werden + Partizip II: Das Haus wird gebaut.</li><li>Past: Der Brief wurde geschrieben.</li></ul><h3>Zustandspassiv</h3><ul><li>sein + Partizip II: Das Haus ist gebaut. (finished state)</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>Agent expressed with "von + Dative". Use "durch + Accusative" for indirect agents in formal German.</p></div><div class="tip-box"><div class="box-lbl">Tip:</div><p>"Die Tür ist geöffnet" can be state passive OR adjective predicate. Context clarifies.</p></div>`,
+     questions:[
+       {q:'Auxiliary for Vorgangspassiv?',opts:['sein','haben','werden','lassen'],correct:2,hint:'"Werden" + Partizip II = process passive.'},
+       {q:'"Das Auto ist repariert." — This is:',opts:['Vorgangspassiv','Zustandspassiv','Perfekt aktiv','Konjunktiv II'],correct:1,hint:'"Sein + Partizip II" = resulting state.'},
+       {q:'How to express the agent in passive?',opts:['mit + Dative','von + Dative','durch + Nominative','für + Accusative'],correct:1,hint:'"von" + Dative.'},
+       {q:'Perfekt passive of "Man hat das Fenster geöffnet":',opts:['Das Fenster hat geöffnet worden.','Das Fenster wurde geöffnet.','Das Fenster ist geöffnet worden.','Das Fenster ist geöffnet.'],correct:2,hint:'Perfekt passive = sein + Partizip II + worden.'},
+       {q:'"Durch" vs "von" in passive:',opts:['direct agent','indirect means/cause','time of action','location'],correct:1,hint:'"Durch" = indirect cause, not intentional agent.'}
+     ]},
+    {title:'Extended Participial Phrases',sub:'Complex noun-phrase constructions',
+     notes:`<h2>Extended Participial Phrases</h2><p>Formal German compresses relative clauses into participial phrases before the noun — sandwiched between article and noun.</p><p><strong>Relative clause:</strong> der Mann, der das Buch geschrieben hat<br/><strong>Participial phrase:</strong> der das Buch geschrieben habende Mann</p><div class="note-box"><div class="box-lbl">Note:</div><p>Structure: article + [all modifiers + Partizip I or II + adjective ending] + noun.</p></div><h3>Which Participle</h3><ul><li><strong>Partizip I</strong> (active, ongoing): das schlafende Kind</li><li><strong>Partizip II</strong> (passive, completed): das gebaute Haus</li></ul><div class="tip-box"><div class="box-lbl">Tip:</div><p>Common in newspapers, legal texts, and academic writing. Identify the article first, then find the participle just before the noun.</p></div>`,
+     questions:[
+       {q:'"Das weinende Kind" — what is "weinende"?',opts:['Partizip II as adjective','Partizip I as adjective','An infinitive','Past tense form'],correct:1,hint:'Partizip I = stem + -end + adjective ending.'},
+       {q:'Partizip I of "arbeiten"?',opts:['gearbeitet','gearbeiten','arbeitend','arbeitete'],correct:2,hint:'Partizip I = stem + -d. arbeiten → arbeitend.'},
+       {q:'"Der von vielen gelesene Roman" means:',opts:['The novel read by many','The novel reading many','The novel that reads many','A novel about readers'],correct:0,hint:'"Gelesen" = Partizip II functioning as passive adjective.'},
+       {q:'Extended participial phrases are most common in:',opts:['Informal speech','Academic and newspaper language',"Children's books",'Text messages'],correct:1,hint:'Hallmark of formal written German.'},
+       {q:'"Der gerade ___ Zug" (the just-arriving train):',opts:['ankommend Zug','ankommende Zug','ankommendes Zug','ankommen Zug'],correct:1,hint:'"Zug" is masculine nominative → adjective ending -e.'}
+     ]},
+    {title:'Register & Formality',sub:'Academic, formal and business German',
+     notes:`<h2>Register & Formality</h2><p>At C1, register awareness is crucial. German has distinct formal and informal registers.</p><h3>Key Distinctions</h3><ul><li><strong>du / Sie</strong>: informal vs. formal</li><li><strong>Vocabulary</strong>: "kriegen" (informal) → "erhalten" (formal)</li><li><strong>Tense</strong>: Präteritum preferred over Perfekt in writing</li><li><strong>Passive</strong>: more common in academic/official texts</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>Avoid contractions in formal writing: "Ich hab's" → "Ich habe es". "Wegen dem" (colloquial) → "wegen des" (correct genitive).</p></div><h3>Formal Equivalents</h3><ul><li>kriegen → erhalten / bekommen</li><li>machen → durchführen / realisieren</li><li>sagen → mitteilen / informieren</li></ul><div class="tip-box"><div class="box-lbl">Tip:</div><p>Präteritum of modals is preferred even in spoken formal contexts: "Ich wollte fragen..." not "Ich habe fragen wollen..."</p></div>`,
+     questions:[
+       {q:'Formal equivalent of "kriegen":',opts:['bekommen','nehmen','holen','erhalten'],correct:3,hint:'"Erhalten" is most formal for "to receive".'},
+       {q:'Preferred past tense in formal writing?',opts:['Plusquamperfekt','Futur II','Präteritum','Konjunktiv I'],correct:2,hint:'Präteritum is standard in formal texts.'},
+       {q:'"Wegen" governs which case formally?',opts:['Accusative','Nominative','Dative (colloquial)','Genitive'],correct:3,hint:'Formally, "wegen" takes Genitive.'},
+       {q:'Which is MORE common in formal German?',opts:['Active voice','du-form','Passive constructions','Contractions'],correct:2,hint:'Academic texts frequently use passive to depersonalise.'},
+       {q:'Formal version of "Ich hab\'s gemacht":',opts:['Ich habe es getan.','Ich machte es.','Ich hab es gemacht.','Ich tut es.'],correct:0,hint:'No contraction, fully spelled out.'}
+     ]},
+    {title:'Advanced Idioms',sub:'Native-level expressions and collocations',
+     notes:`<h2>Advanced German Idioms</h2><p>High-frequency C1 idioms that make your German sound natural:</p><ul><li><strong>auf dem Laufenden bleiben</strong> — to stay up to date</li><li><strong>jemandem auf den Nerven gehen</strong> — to get on someone's nerves</li><li><strong>den Nagel auf den Kopf treffen</strong> — to hit the nail on the head</li><li><strong>Eulen nach Athen tragen</strong> — to carry coals to Newcastle</li><li><strong>jemandem einen Bären aufbinden</strong> — to pull someone's leg / deceive</li><li><strong>etwas auf Eis legen</strong> — to put something on hold</li></ul><div class="note-box"><div class="box-lbl">Note:</div><p>"Jemandem einen Bären aufbinden" literally means "to tie a bear onto someone" — idiomatically: to deceive or trick them.</p></div><div class="tip-box"><div class="box-lbl">Tip:</div><p>Learn idioms in full sentences with context. Know what situation triggers each one and its emotional register.</p></div>`,
+     questions:[
+       {q:'"Den Nagel auf den Kopf treffen" means:',opts:['To make a mistake','To hit the nail on the head','To lose temper','To give up'],correct:1,hint:'Almost identical to its English equivalent.'},
+       {q:'"Etwas auf Eis legen" means:',opts:['To cool down','To freeze in place','To put on hold','To preserve forever'],correct:2,hint:'Like English "put on ice" — to postpone.'},
+       {q:'"Eulen nach Athen tragen" describes:',opts:['Wisdom','A pointless/redundant task','A complicated plan','Carrying burdens'],correct:1,hint:'Athens = city of wisdom. Bringing owls there is redundant.'},
+       {q:'"Jemandem einen Bären aufbinden" means:',opts:['To burden someone','To lie to / deceive someone','To help with heavy task','To send on errand'],correct:1,hint:'To trick or pull someone\'s leg.'},
+       {q:'"Auf dem Laufenden bleiben" means:',opts:['Stay physically active','Keep running','Stay up to date / informed','Remain in the race'],correct:2,hint:'"Laufend" = ongoing/current. Staying informed.'}
+     ]}
+  ]
+};
+
+// ═══════════════════ STATE ═══════════════════
+let S={
+  tIdx:0,tScore:0,tSel:null,tAttempts:0,
+  level:'A1',
+  modIdx:0,
+  pIdx:0,pSel:null,pAttempts:0,pScore:0
+};
+
+// ═══════════════════ UTILS ═══════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function makeDots(containerId,total,current,dotClass,activeDotClass){
+  const el=document.getElementById(containerId);
+  el.innerHTML='';
+  for(let i=0;i<total;i++){
+    const d=document.createElement('div');
+    d.className=dotClass+(i<current?' done':'')+(i===current?' active':'');
+    el.appendChild(d);
+  }
+}
+
+function renderAnswers(containerId,opts,selectFn){
+  const cont=document.getElementById(containerId);
+  cont.innerHTML='';
+  opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='answer-opt';
+    btn.textContent=opt;
+    btn.onclick=()=>selectFn(i);
+    cont.appendChild(btn);
+  });
+}
+
+function lockAnswers(containerId){
+  document.querySelectorAll('#'+containerId+' .answer-opt').forEach(b=>b.disabled=true);
+}
+
+function setAnswerClass(containerId,idx,cls){
+  const btns=[...document.querySelectorAll('#'+containerId+' .answer-opt')];
+  if(btns[idx]) btns[idx].className='answer-opt '+cls;
+}
+
+function rehookAnswers(containerId,wrongIdx,selectFn,submitId){
+  const btns=[...document.querySelectorAll('#'+containerId+' .answer-opt')];
+  btns.forEach((b,i)=>{
+    if(i!==wrongIdx){
+      b.disabled=false;
+      b.onclick=()=>{
+        btns.forEach(x=>{if(!x.classList.contains('wrong'))x.className='answer-opt'});
+        b.className='answer-opt selected';
+        selectFn(i);
+        document.getElementById(submitId).disabled=false;
+      };
+    }
+  });
+}
+
+// ═══════════════════ TEST ═══════════════════
+function startTest(){
+  S.tIdx=0;S.tScore=0;
+  showScreen('screen-test');
+  renderTestQ();
+}
+
+function renderTestQ(){
+  const q=PLACEMENT[S.tIdx];
+  S.tSel=null;S.tAttempts=0;
+  document.getElementById('testLabel').textContent=`QUESTION ${S.tIdx+1} OF 6`;
+  document.getElementById('testQ').textContent=q.text;
+  document.getElementById('testHint').classList.remove('show');
+  document.getElementById('testSubmit').disabled=true;
+  makeDots('testDots',6,S.tIdx,'dot','');
+  renderAnswers('testAnswers',q.opts,i=>{
+    document.querySelectorAll('#testAnswers .answer-opt').forEach(b=>b.className='answer-opt');
+    document.querySelectorAll('#testAnswers .answer-opt')[i].className='answer-opt selected';
+    S.tSel=i;
+    document.getElementById('testSubmit').disabled=false;
+  });
+}
+
+function submitTest(){
+  if(S.tSel===null)return;
+  const q=PLACEMENT[S.tIdx];
+  lockAnswers('testAnswers');
+  document.getElementById('testSubmit').disabled=true;
+  if(S.tSel===q.correct){
+    setAnswerClass('testAnswers',S.tSel,'correct');
+    S.tScore++;
+    setTimeout(nextTestQ,850);
+  } else {
+    setAnswerClass('testAnswers',S.tSel,'wrong');
+    S.tAttempts++;
+    if(S.tAttempts===1){
+      document.getElementById('testHintText').textContent=q.hint;
+      document.getElementById('testHint').classList.add('show');
+      const sel=S.tSel;
+      S.tSel=null;
+      rehookAnswers('testAnswers',sel,i=>{S.tSel=i;},'testSubmit');
+    } else {
+      setAnswerClass('testAnswers',q.correct,'correct');
+      setTimeout(nextTestQ,1300);
+    }
+  }
+}
+
+function nextTestQ(){
+  S.tIdx++;
+  if(S.tIdx>=PLACEMENT.length) finishTest();
+  else renderTestQ();
+}
+
+function finishTest(){
+  S.level=S.tScore<=2?'A1':S.tScore<=4?'B1':'C1';
+  const info=LEVEL_INFO[S.level];
+  document.getElementById('resultScore').textContent=`${S.tScore} / 6 correct`;
+  document.getElementById('resultBig').textContent=S.level;
+  document.getElementById('resultName').textContent=info.name;
+  document.getElementById('resultDesc').textContent=info.desc;
+  showScreen('screen-result');
+}
+
+// ═══════════════════ MODULES ═══════════════════
+function goToModules(){
+  const info=LEVEL_INFO[S.level];
+  document.getElementById('modulesNavTitle').textContent=`Level ${S.level}`;
+  document.getElementById('modulesTitle').textContent=`Level ${S.level} Modules`;
+  document.getElementById('modulesSubtitle').textContent=info.sub;
+  const grid=document.getElementById('modulesGrid');
+  grid.innerHTML='';
+  MODULES[S.level].forEach((m,i)=>{
+    const card=document.createElement('div');
+    card.className='module-card';
+    card.innerHTML=`
+      <div class="module-icon">📖</div>
+      <h3>${i+1}. ${S.level} Module ${i+1}: ${m.title}</h3>
+      <p style="font-size:0.83rem;color:#888;margin:0">${m.sub}</p>
+      <div class="start-row"><div class="start-icon">▶</div>START MODULE</div>`;
+    card.onclick=()=>openModule(i);
+    grid.appendChild(card);
+  });
+  showScreen('screen-modules');
+}
+
+// ═══════════════════ MODULE ═══════════════════
+function openModule(idx){
+  S.modIdx=idx;S.pIdx=0;S.pScore=0;
+  const mod=MODULES[S.level][idx];
+  document.getElementById('moduleNavTitle').textContent=mod.title;
+  document.getElementById('notesBody').innerHTML=mod.notes;
+  document.getElementById('notesCard').style.display='block';
+  document.getElementById('practiceCard').style.display='none';
+  const cc=document.getElementById('completionCard');
+  cc.classList.remove('show');cc.style.display='none';
+  showScreen('screen-module');
+}
+
+function startPractice(){
+  document.getElementById('notesCard').style.display='none';
+  document.getElementById('practiceCard').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  renderPracticeQ();
+}
+
+function renderPracticeQ(){
+  const q=MODULES[S.level][S.modIdx].questions[S.pIdx];
+  S.pSel=null;S.pAttempts=0;
+  document.getElementById('practiceHint').classList.remove('show');
+  document.getElementById('practiceSubmit').disabled=true;
+  makeDots('pdots',5,S.pIdx,'pdot','');
+  document.getElementById('practiceQ').textContent=q.q;
+  renderAnswers('practiceAnswers',q.opts,i=>{
+    document.querySelectorAll('#practiceAnswers .answer-opt').forEach(b=>b.className='answer-opt');
+    document.querySelectorAll('#practiceAnswers .answer-opt')[i].className='answer-opt selected';
+    S.pSel=i;
+    document.getElementById('practiceSubmit').disabled=false;
+  });
+  const pc=document.getElementById('practiceCard');
+  pc.style.animation='none';pc.offsetHeight;pc.style.animation='fadeUp 0.3s ease';
+}
+
+function submitPractice(){
+  if(S.pSel===null)return;
+  const q=MODULES[S.level][S.modIdx].questions[S.pIdx];
+  lockAnswers('practiceAnswers');
+  document.getElementById('practiceSubmit').disabled=true;
+  if(S.pSel===q.correct){
+    setAnswerClass('practiceAnswers',S.pSel,'correct');
+    S.pScore++;
+    setTimeout(nextPracticeQ,850);
+  } else {
+    setAnswerClass('practiceAnswers',S.pSel,'wrong');
+    S.pAttempts++;
+    if(S.pAttempts===1){
+      document.getElementById('practiceHintTxt').textContent=q.hint;
+      document.getElementById('practiceHint').classList.add('show');
+      const sel=S.pSel;S.pSel=null;
+      rehookAnswers('practiceAnswers',sel,i=>{S.pSel=i;},'practiceSubmit');
+    } else {
+      setAnswerClass('practiceAnswers',q.correct,'correct');
+      setTimeout(nextPracticeQ,1300);
+    }
+  }
+}
+
+function nextPracticeQ(){
+  S.pIdx++;
+  if(S.pIdx>=MODULES[S.level][S.modIdx].questions.length) showCompletion();
+  else renderPracticeQ();
+}
+
+function showCompletion(){
+  document.getElementById('practiceCard').style.display='none';
+  const cc=document.getElementById('completionCard');
+  cc.style.display='block';cc.classList.add('show');
+  document.getElementById('completionMsg').textContent=
+    `You got ${S.pScore} out of ${MODULES[S.level][S.modIdx].questions.length} correct. Great work!`;
+  const nb=document.getElementById('nextModBtn');
+  const mods=MODULES[S.level];
+  if(S.modIdx>=mods.length-1){
+    nb.textContent='🎉 Back to Modules';
+    nb.onclick=goToModules;
+  } else {
+    nb.textContent='Next Module →';
+    nb.onclick=()=>openModule(S.modIdx+1);
+  }
+}
+</script>
+</body>
+</html>
