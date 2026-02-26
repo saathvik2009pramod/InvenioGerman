@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Level · Deutsch Lernen</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="result-page">
+
+  <div class="deco-circle deco-1"></div>
+  <div class="deco-circle deco-2"></div>
+
+  <div class="result-container">
+    <div class="result-icon animate-in">🎯</div>
+
+    <div class="score-badge animate-in-delay-1">
+      <span>⭐</span>
+      <span id="scoreText">Score: 0 / 6</span>
+    </div>
+
+    <p style="color:var(--muted);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;" class="animate-in-delay-1">Your Level</p>
+
+    <div class="result-level-display animate-in-delay-1" id="levelDisplay">A1</div>
+    <div class="result-level-name animate-in-delay-2" id="levelName">Beginner</div>
+    <p class="result-desc animate-in-delay-2" id="levelDesc">Loading...</p>
+
+    <div class="animate-in-delay-3">
+      <button class="btn-primary" id="goBtn" onclick="goToModules()">
+        Go to My Modules <span class="btn-arrow">→</span>
+      </button>
+    </div>
+
+    <div style="margin-top:16px;" class="animate-in-delay-3">
+      <a href="test_root.html" class="btn-secondary">Retake Test</a>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const level = params.get('level') || localStorage.getItem('deutschLevel') || 'A1';
+    const score = params.get('score') || localStorage.getItem('deutschScore') || '0';
+    const name  = params.get('name')  || 'Beginner';
+    const desc  = params.get('desc')  || '';
+
+    document.getElementById('levelDisplay').textContent = level;
+    document.getElementById('levelName').textContent    = name;
+    document.getElementById('levelDesc').textContent    = decodeURIComponent(desc);
+    document.getElementById('scoreText').textContent    = `Score: ${score} / 6`;
+
+    function goToModules() {
+      window.location.href = `home.html?level=${level}`;
+    }
+  </script>
+</body>
+</html>
