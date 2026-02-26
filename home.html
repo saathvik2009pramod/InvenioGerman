@@ -1,158 +1,79 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Welcome — Digital Germany</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body class="home-page">
-    <header class="site-header">
-      <div class="container header-inner">
-        <a class="brand" href="#">Digital Germany</a>
-        <nav class="main-nav" aria-label="Main navigation">
-          <a href="#home" class="nav-link">Home</a>
-          <a href="#explore" class="nav-link">Explore</a>
-          <a href="#phrases" class="nav-link">Phrases</a>
-          <a href="#firebase" class="nav-link">Demo</a>
-          <a href="#contact" class="nav-link">Contact</a>
-        </nav>
-        <button class="nav-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
-        <button id="theme-toggle" aria-label="Toggle theme" title="Toggle dark / light">🌙</button>
-      </div>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modules · Deutsch Lernen</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="modules-page">
 
-    <main id="home">
-      <section class="hero">
-        <div class="hero-bg" aria-hidden="true"></div>
-        <div class="hero-content container">
-          <h1 class="title">Willkommen in <span class="accent">Digital Germany</span></h1>
-          <p class="lead">An immersive single-page experience — culture, cities, language, and interactive demos.</p>
-          <div class="hero-actions">
-            <a class="btn primary" href="#explore">Explore Cities</a>
-            <a class="btn ghost" href="#phrases">Learn Phrases</a>
-          </div>
-        </div>
-        <div class="hero-blob" aria-hidden="true"></div>
-      </section>
+  <div class="deco-circle deco-1"></div>
+  <div class="deco-circle deco-2"></div>
 
-      <section id="explore" class="section container reveal">
-        <h2>Explore Cities</h2>
-        <p class="muted">Hover cards to reveal quick facts and subtle motion.</p>
-        <div class="cards">
-          <article class="card">
-            <img loading="lazy" src="https://images.unsplash.com/photo-1543349684-1b9bc2a1b2e3?w=800&q=60&auto=format&fit=crop" alt="Berlin skyline">
-            <div class="card-body">
-              <h3>Berlin</h3>
-              <p class="small muted">Tech hub, culture, and history.</p>
-            </div>
-          </article>
-          <article class="card">
-            <img loading="lazy" src="https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=60&auto=format&fit=crop" alt="Munich">
-            <div class="card-body">
-              <h3>Munich</h3>
-              <p class="small muted">Design, beer gardens, and engineering.</p>
-            </div>
-          </article>
-          <article class="card">
-            <img loading="lazy" src="https://images.unsplash.com/photo-1505765057496-3fdb6a7c8f8b?w=800&q=60&auto=format&fit=crop" alt="Hamburg">
-            <div class="card-body">
-              <h3>Hamburg</h3>
-              <p class="small muted">Maritime spirit and creative scenes.</p>
-            </div>
-          </article>
-        </div>
-      </section>
+  <!-- Hero header -->
+  <div class="modules-hero">
+    <a href="index.html" class="back-link">← Start Over</a>
+    <span class="level-badge" id="levelBadge">A1</span>
+    <h2 id="modulePageTitle">A1 — Beginner</h2>
+    <p>5 modules &nbsp;·&nbsp; Learn at your pace</p>
+  </div>
 
-      <section id="phrases" class="section container reveal">
-        <h2>Useful Phrases</h2>
-        <div class="phrases-grid">
-          <button class="phrase" data-text="Guten Tag">Guten Tag — Hello</button>
-          <button class="phrase" data-text="Danke">Danke — Thank you</button>
-          <button class="phrase" data-text="Wo ist der Bahnhof?">Wo ist der Bahnhof? — Where is the station?</button>
-          <button class="phrase" data-text="Ich spreche nur ein bisschen Deutsch">Ich spreche nur ein bisschen Deutsch — I speak only a little German</button>
-        </div>
-        <div style="margin-top:12px">
-          <button id="practice-phrases" class="btn primary">Practice Phrases</button>
-        </div>
-      </section>
+  <!-- Module grid -->
+  <div class="modules-grid" id="modulesGrid"></div>
 
-      <section id="firebase" class="section container reveal">
-        <h2>Interactive Demo</h2>
-        <p class="muted">Small Firebase demo: sign-in and post messages (replace config to enable).</p>
-        <div class="firebase-panel">
-          <div class="auth">
-            <div id="user-info" class="user-info" hidden>
-              <div>Signed in as <strong id="user-name"></strong></div>
-              <div class="muted" id="user-email"></div>
-              <button id="sign-out" class="btn">Sign out</button>
-            </div>
-            <div id="signed-out" class="signed-out">
-              <button id="google-signin" class="btn">Sign in with Google</button>
-              <form id="email-signin-form" class="email-form">
-                <input id="email" type="email" placeholder="Email" required>
-                <input id="password" type="password" placeholder="Password" required>
-                <button id="email-signin" class="btn secondary">Sign In / Sign Up</button>
-              </form>
-            </div>
-          </div>
+  <script src="script.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const level  = params.get('level') || localStorage.getItem('deutschLevel') || 'A1';
 
-          <div id="firestore-demo" class="firestore" hidden>
-            <label for="msg-input" class="sr-only">Message</label>
-            <input id="msg-input" placeholder="Write a short message">
-            <button id="save-msg" class="btn">Save</button>
-            <ul id="messages" class="messages"></ul>
-          </div>
-          
-          <div id="storage-demo" class="firestore" hidden style="margin-top:12px;">
-            <label for="file-input" class="sr-only">Upload file</label>
-            <input id="file-input" type="file">
-            <button id="upload-btn" class="btn">Upload File</button>
-            <div id="upload-progress" style="height:8px;background:rgba(255,255,255,0.03);border-radius:8px;margin-top:8px;overflow:hidden;display:none;">
-              <div id="upload-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#5eead4,#60a5fa);"></div>
-            </div>
-            <div id="upload-url" style="margin-top:8px;word-break:break-all;color:var(--accent);"></div>
-          </div>
-        </div>
-      </section>
+    const MODULES = {
+      A1: [
+        { title: 'Greetings & Introductions', sub: 'Hello, names, and basic phrases' },
+        { title: 'Numbers & Colors',          sub: 'Count 1–100 and name basic colors' },
+        { title: 'Articles & Gender',         sub: 'der, die, das — mastering noun gender' },
+        { title: 'Everyday Verbs',            sub: 'sein, haben, machen, gehen' },
+        { title: 'Family & People',           sub: 'Describe family members and relationships' }
+      ],
+      B1: [
+        { title: 'Perfekt Tense',             sub: 'Talking about past events naturally' },
+        { title: 'Modal Verbs',               sub: 'können, müssen, dürfen, wollen' },
+        { title: 'Subordinate Clauses',       sub: 'weil, obwohl, dass, wenn' },
+        { title: 'Prepositions & Cases',      sub: 'Accusative vs. Dative in context' },
+        { title: 'Opinion & Argument',        sub: 'Express views and debate in German' }
+      ],
+      C1: [
+        { title: 'Konjunktiv II',             sub: 'Reported speech & hypothetical mood' },
+        { title: 'Passive Voice',             sub: 'Vorgangspassiv and Zustandspassiv' },
+        { title: 'Extended Participial Phrases', sub: 'Complex noun-phrase constructions' },
+        { title: 'Register & Formality',      sub: 'Academic, formal and business German' },
+        { title: 'Advanced Idioms',           sub: 'Native-level expressions and collocations' }
+      ]
+    };
 
-      <section id="contact" class="section container reveal">
-        <h2>Contact</h2>
-        <p class="muted">This is a demo page — use Firebase Console and Hosting to publish.</p>
-      </section>
-    </main>
+    const levelNames = { A1: 'A1 — Beginner', B1: 'B1 — Intermediate', C1: 'C1 — Advanced' };
+    const levelClasses = { A1: 'a1', B1: 'b1', C1: 'c1' };
 
-    <footer class="site-footer">
-      <div class="container footer-row">
-        <div>© Digital Germany — Demo</div>
-        <div class="muted">Made with ❤️</div>
-      </div>
-    </footer>
+    document.getElementById('modulePageTitle').textContent = levelNames[level] || levelNames['A1'];
+    const badge = document.getElementById('levelBadge');
+    badge.textContent = level;
+    badge.className   = `level-badge ${levelClasses[level]}`;
 
-    <!-- Firebase CDN (compat) -->
-    <!-- Flashcard / speech modal -->
-    <div id="flashcard-modal" class="modal" aria-hidden="true">
-      <div class="content" role="dialog" aria-modal="true" aria-labelledby="flashcard-title">
-        <button id="flashcard-close" class="close">Close</button>
-        <h3 id="flashcard-title">Practice Phrases</h3>
-        <div id="flashcard-card" style="display:flex;flex-direction:column;gap:12px;margin-top:12px">
-          <div id="flash-german" style="font-size:24px;font-weight:700"></div>
-          <div id="flash-english" class="small muted"></div>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button id="flash-play" class="btn">Play</button>
-            <button id="flash-record" class="btn">Record</button>
-            <button id="flash-next" class="btn secondary">Next</button>
-          </div>
-          <div id="flash-result" class="small muted" style="margin-top:8px"></div>
-        </div>
-      </div>
-    </div>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
-
-    <script src="script.js"></script>
-  </body>
-  </html>
+    const grid = document.getElementById('modulesGrid');
+    const mods = MODULES[level] || MODULES['A1'];
+    mods.forEach((m, i) => {
+      const a = document.createElement('a');
+      a.href      = `module.html?level=${level}&module=${i}`;
+      a.className = 'module-card animate-in';
+      a.style.animationDelay = `${i * 0.07}s`;
+      a.innerHTML = `
+        <div class="module-num">Module ${i + 1}</div>
+        <div class="module-title">${m.title}</div>
+        <div class="module-sub">${m.sub}</div>
+        <div class="module-arrow">→</div>
+      `;
+      grid.appendChild(a);
+    });
+  </script>
+</body>
+</html>
